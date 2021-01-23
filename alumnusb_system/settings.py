@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'accounts',
     'CSV',
     'bootstrap4',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -88,7 +89,7 @@ DATABASES = {
          'NAME': 'alumnusb_db',
          'USER': 'alumnusb_admin',
          'PASSWORD': 'qwerqwer',
-         'HOST': 'db',
+         'HOST': 'localhost',
          'PORT': '5432',
      }
 }
@@ -177,3 +178,14 @@ JET_THEMES = [
         'title': 'Light Gray'
     }
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
