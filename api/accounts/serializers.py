@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import User_information, User_stats
+from accounts.models import User_information, User_stats
  
 class UserSerializer(serializers.ModelSerializer):
 

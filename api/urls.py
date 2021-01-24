@@ -1,6 +1,5 @@
-from django.conf.urls import url
-from rest_framework_jwt.views import obtain_jwt_token
+from django.urls import include, path
 
 urlpatterns = [
-    url(r'^login/', obtain_jwt_token),
+    path('accounts/',include('api.accounts.urls')),
 ]

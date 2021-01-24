@@ -15,8 +15,4 @@ urlpatterns = [
 	url(r'^register/', accounts_views.registerView, name = "register_url"),
 
 	url(r'^logout/', LogoutView.as_view(next_page="home"), name = "logout"), 
-
-	path('api-token-auth/', obtain_jwt_token),
-    path('api-token-refresh/', refresh_jwt_token),
-	path('api/register/', accounts_views.register, name="register")
 ]
