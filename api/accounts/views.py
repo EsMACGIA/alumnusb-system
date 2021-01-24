@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from accounts.models import User_information, User_stats, Profile_Picture
+from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework import status
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserInformationSerializer
 
 # Create your views here.
 
@@ -84,3 +86,25 @@ def register(request):
     # Add id to the form to show that the user was created
     form_content["id"] = user_serializer.data["id"]
     return JsonResponse(form_content, status=status.HTTP_201_CREATED) 
+
+@api_view(['PUT'])
+def edit(request, user_id):
+
+    # Get the editform's content from JSON to a python dictionary
+    form_content = JSONParser().parse(request)
+
+    try:
+        user =  User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error" : "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+    
+    user_info = User_information.objects.get(Email=user.email)
+    user_info_serial = UserInformationSerializer(user_info, data = form_content, partial=True)
+
+    # Check for errors in the form 
+    if not user_info_serial.is_valid():
+        return JsonResponse(user_info_serial.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    user_info_serial.save()
+
+    return JsonResponse(user_info_serial.data, status=status.HTTP_200_OK) 
