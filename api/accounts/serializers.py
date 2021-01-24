@@ -4,6 +4,7 @@ from accounts.models import User_information, User_stats
  
 class UserSerializer(serializers.ModelSerializer):
 
+    # Needed to hash the password on creation
     def create(self, *args, **kwargs):
         user = super().create(*args, **kwargs)
         p = user.password
@@ -11,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+    # Needed to hash the password on update
     def update(self, *args, **kwargs):
         user = super().update(*args, **kwargs)
         p = user.password

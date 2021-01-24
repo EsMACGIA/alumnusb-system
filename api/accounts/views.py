@@ -54,10 +54,10 @@ def register(request):
     Administrates registration requests. 
     
     Parameters: 
-    request : POST request with user basic data (password twice, username, email)
+    request : POST request with user basic data (password, username, email)
 
     Returns: 
-    Json with c
+    Json with created user's data
   
     """
     
