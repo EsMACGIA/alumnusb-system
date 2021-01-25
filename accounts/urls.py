@@ -2,7 +2,6 @@ from django.urls import path
 from django.conf.urls import url
 from . import views as accounts_views
 from django.contrib.auth.views import LoginView, LogoutView
-from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 urlpatterns = [
 	url(r'^personal_data/(?P<username>[\w.@+-]+)/$', accounts_views.user_data, name = 'user_data'),

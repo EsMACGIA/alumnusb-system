@@ -25,17 +25,14 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'password')   
  
 class UserInformationSerializer(serializers.ModelSerializer):
-    Picture = serializers.StringRelatedField(many=False)
- 
     class Meta:
         model = User_information
         exclude = ['id']
         read_only_fields = ['Email']
 
 class UserStatsSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = User_stats
-        fexclude = ['id']
+        exclude = ['id']
     
       
