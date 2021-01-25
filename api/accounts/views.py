@@ -90,6 +90,18 @@ def register(request):
 @api_view(['PUT'])
 def edit(request, user_id):
 
+    """ 
+    Administrates account edition requests. 
+    
+    Parameters: 
+    request : PUT request with user User_information data except Picture, Email and Codigo_Alumn_USB
+    (int) user_id: requested user's id
+
+    Returns: 
+    Json with updated user's information 
+  
+    """
+
     # Get the editform's content from JSON to a python dictionary
     form_content = JSONParser().parse(request)
 
@@ -108,3 +120,32 @@ def edit(request, user_id):
     user_info_serial.save()
 
     return JsonResponse(user_info_serial.data, status=status.HTTP_200_OK) 
+
+@api_view(['GET'])
+def profile(request, user_id):
+
+    """ 
+    Administrates account's profile requests. 
+    
+    Parameters: 
+    request : GET request 
+    (int) user_id: requested user's id
+
+    Returns: 
+    Json with user's profile information
+  
+    """
+
+    # User must exist
+    try:
+        user =  User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return JsonResponse({"error" : "User does not exist"}, status=status.HTTP_404_NOT_FOUND)
+
+    # User requested and requesting user must match
+    if user.id != request.user.id:
+        return JsonResponse({"error" : "Unauthorized access to another user's account"}, status=status.HTTP_401_UNAUTHORIZED) 
+
+    user_info = User_information.objects.get(Email=user.email)
+
+    return JsonResponse(UserInformationSerializer(user_info).data, status=status.HTTP_200_OK)
