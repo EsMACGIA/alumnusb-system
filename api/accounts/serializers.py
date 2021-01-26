@@ -34,5 +34,6 @@ class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = User_stats
         exclude = ['id']
+        read_only_fields = ['Email']
     
       
