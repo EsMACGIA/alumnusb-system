@@ -26,4 +26,7 @@ urlpatterns = [
 
     # View para pasarle la informacion a los graficos
     path('resume-chart/', views.resume_chart, name='resume-chart'),
+
+    #API
+    path('api/',include('api.urls')),
 ]
