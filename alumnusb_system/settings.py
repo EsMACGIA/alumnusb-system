@@ -82,6 +82,12 @@ WSGI_APPLICATION = 'alumnusb_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+DB_NAME = os.environ['DB_NAME'] if 'DB_NAME' in os.environ else 'alumnusb_db'
+DB_USER = os.environ['DB_USER'] if 'DB_USER' in os.environ else 'alumnusb_admin'
+DB_PASSWORD = os.environ['DB_PASSWORD'] if 'DB_PASSWORD' in os.environ else 'qwerqwer'
+DB_HOST = os.environ['DB_HOST'] if 'DB_HOST' in os.environ else 'localhost'
+DB_PORT = os.environ['DB_PORT'] if 'DB_PORT' in os.environ else '5432'
+
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',

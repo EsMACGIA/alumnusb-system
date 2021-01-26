@@ -1,5 +1,8 @@
 # ALUMNUSB-SYSTEM
-Web application using gamification strategies for the AlumnUSB NGO. It seeks to motivate graduates of the Simón Bolívar University to make donations constantly through a medal system. In addition, the application allows you to view user statistics
+Web application using gamification strategies for the AlumnUSB NGO. It seeks to 
+motivate graduates of the Simón Bolívar University to make donations constantly 
+through a medal system. In addition, the application allows you to view user 
+statistics.
 
 #
 Software and versions
@@ -16,17 +19,21 @@ Requirements to run
 
 - Python (>=3.x <3.8.x)
 
-#
-Instructions
----------
+## How to run the application
 
-- On the root foler where ``Dockerfile`` file is located, run the following command:
-```
-$ docker-compose up
-```
-- Finally check if the server is running on the docker container by directing http://localhost:8000/ in your browser.
+### Running with Docker Compose
 
-- **Note**: If you need to erase the data on the database delete the postgres container with the following command and compose after it: 
+To execute the app with __Docker Composer__ simply execute `docker-compose up` 
+in the root of the project. This will create and execute 2 containers: 1 with an 
+instance of a PostgreSQL DB and one with the API created with Django.
+
+To check if it is working just go to http://localhost:8000/ in your web browser.
+
+**Note1:** Ports `8000` and `5432` should be available in your local machine in 
+order to bind the __Docker__ containers to your machine ports.
+
+**Note2**: If you need to erase the data on the database delete the postgres 
+container with the following command and compose after it: 
 ```
 $ docker container rm alumnusb-system_db_1
 ```
