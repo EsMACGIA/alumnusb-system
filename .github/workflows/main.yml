@@ -16,3 +16,6 @@ jobs:
           heroku_app_name: "test-app-mfaria" #Must be unique in Heroku
           heroku_email: "mfaria724@gmail.com"
           usedocker: true
+          docker_build_args: 
+            file: ./docker/Dockerfile.dev
+            context: . 
