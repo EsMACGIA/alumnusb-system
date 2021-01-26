@@ -19,4 +19,4 @@ jobs:
           docker_build_args: 
             FILE
           env:
-            FILE: --file ./docker/Dockerfile.dev
+            FILE: "--file ./docker/Dockerfile.dev"
