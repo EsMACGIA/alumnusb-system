@@ -17,5 +17,4 @@ jobs:
           heroku_email: "mfaria724@gmail.com"
           usedocker: true
           docker_build_args: 
-            file: ./docker/Dockerfile.dev
-            context: . 
+            --file ./docker/Dockerfile.dev 
