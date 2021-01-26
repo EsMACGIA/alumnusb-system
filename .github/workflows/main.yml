@@ -16,10 +16,12 @@ jobs:
         run: heroku container:login
       - name: Build Docker image
         run: docker build -f docker/Dockerfile.dev -t test-app-mfaria .
-      - name: Push to Heroku Container Registry
+      - name: Rename image and push image to Heroku Container Registry
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: docker push registry.heroku.com/test-app-mfaria/web:test-app-mfaria
+        run: |
+          docker tag test-app-mfaria registry.heroku.com/test-app-mfaria/web
+          docker push registry.heroku.com/test-app-mfaria/web
       - name: Release
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
