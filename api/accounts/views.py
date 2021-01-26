@@ -6,11 +6,7 @@ from rest_framework.views import APIView
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
-<<<<<<< HEAD
 from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer
-=======
-from .serializers import UserSerializer, UserInformationSerializer
->>>>>>> 9d42f0265557061adda08b3d9d2520b5ea8ba9b3
 from .utils import ErrorMessages, defaultUserStats, defaultUserInfo
 
 @api_view(['POST'])
@@ -98,13 +94,10 @@ class Profile(APIView):
         Json with user's profile information
     
         """
-<<<<<<< HEAD
         
         # User requested and requesting user must match
         if user_id != request.user.id:
             return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED) 
-=======
->>>>>>> 9d42f0265557061adda08b3d9d2520b5ea8ba9b3
 
         # User must exist
         try:
@@ -112,13 +105,6 @@ class Profile(APIView):
         except User.DoesNotExist:
             return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-<<<<<<< HEAD
-=======
-        # User requested and requesting user must match
-        if user.id != request.user.id:
-            return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED) 
-
->>>>>>> 9d42f0265557061adda08b3d9d2520b5ea8ba9b3
         user_info = User_information.objects.get(Email=user.email)
 
         return JsonResponse(UserInformationSerializer(user_info).data, status=status.HTTP_200_OK)
@@ -138,26 +124,16 @@ class Profile(APIView):
 
         # Get the editform's content from JSON to a python dictionary
         form_content = JSONParser().parse(request)
-<<<<<<< HEAD
         
         # User requested and requesting user must match
         if user_id != request.user.id:
             return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED) 
-=======
->>>>>>> 9d42f0265557061adda08b3d9d2520b5ea8ba9b3
 
         try:
             user =  User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-<<<<<<< HEAD
-=======
-        # User requested and requesting user must match
-        if user.id != request.user.id:
-            return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED) 
-        
->>>>>>> 9d42f0265557061adda08b3d9d2520b5ea8ba9b3
         user_info = User_information.objects.get(Email=user.email)
         user_info_serial = UserInformationSerializer(user_info, data = form_content, partial=True)
 
