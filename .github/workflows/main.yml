@@ -19,8 +19,8 @@ jobs:
       - name: Push to Heroku Container Registry
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: docker push test-app-mfaria
+        run: docker push registry.heroku.com/test-app-mfaria/web:test-app-mfaria
       - name: Release
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release -a test-app-mfaria test-app-mfaria
+        run: heroku container:release -a test-app-mfaria web
