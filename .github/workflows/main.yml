@@ -4,18 +4,27 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      APP_NAME: gamification-api-dev
     steps:
       - uses: actions/checkout@v2
-      - uses: akhileshns/heroku-deploy@v3.8.9 # This is the action
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "alumnusb-gamification-api-dev" #Must be unique in Heroku
-          heroku_email: "mfaria724@gmail.com"
-          usedocker: true
+      - name: Login to Heroku Container registry
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+      - name: Build Docker image
+        run: docker build -f docker/Dockerfile.dev -t $APP_NAME .
+      - name: Rename image and push image to Heroku Container Registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          docker tag $APP_NAME registry.heroku.com/$APP_NAME/web
+          docker push registry.heroku.com/$APP_NAME/web
+      - name: Release
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release -a $APP_NAME web

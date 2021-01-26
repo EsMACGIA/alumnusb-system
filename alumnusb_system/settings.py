@@ -108,18 +108,22 @@ WSGI_APPLICATION = 'alumnusb_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+DB_NAME = os.environ['DB_NAME'] if 'DB_NAME' in os.environ else 'alumnusb_db'
+DB_USER = os.environ['DB_USER'] if 'DB_USER' in os.environ else 'alumnusb_admin'
+DB_PASSWORD = os.environ['DB_PASSWORD'] if 'DB_PASSWORD' in os.environ else 'qwerqwer'
+DB_HOST = os.environ['DB_HOST'] if 'DB_HOST' in os.environ else 'localhost'
+DB_PORT = os.environ['DB_PORT'] if 'DB_PORT' in os.environ else '5432'
+
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',
-         'NAME': 'alumnusb_db',
-         'USER': 'alumnusb_admin',
-         'PASSWORD': 'qwerqwer',
-#        'HOST': 'db',
-         'HOST': 'localhost',
-         'PORT': '5432',
+         'NAME': os.environ['DB_NAME'],
+         'USER': os.environ['DB_USER'],
+         'PASSWORD': os.environ['DB_PASSWORD'],
+         'HOST': os.environ['DB_HOST'],
+         'PORT': os.environ['DB_PORT'],
      }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
