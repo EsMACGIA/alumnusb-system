@@ -10,19 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Env Variables Definition
+        - run: |
+          export APP_NAME=test-app-mfaria
+          echo "::set-env name=APP_NAME::$APP_NAME"
       - name: Login to Heroku Container registry
         env: 
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: heroku container:login
       - name: Build Docker image
-        run: docker build -f docker/Dockerfile.dev -t test-app-mfaria .
+        run: docker build -f docker/Dockerfile.dev -t $APP_NAME .
       - name: Rename image and push image to Heroku Container Registry
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
-          docker tag test-app-mfaria registry.heroku.com/test-app-mfaria/web
-          docker push registry.heroku.com/test-app-mfaria/web
+          docker tag $APP_NAME registry.heroku.com/$APP_NAME/web
+          docker push registry.heroku.com/$APP_NAME/web
       - name: Release
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-        run: heroku container:release -a test-app-mfaria web
+        run: heroku container:release -a $APP_NAME web
