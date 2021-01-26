@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      APP_NAME: test-app-mfaria
+      APP_NAME: gamification-api-dev
     steps:
       - uses: actions/checkout@v2
       - name: Login to Heroku Container registry
