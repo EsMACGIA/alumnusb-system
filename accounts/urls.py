@@ -13,5 +13,5 @@ urlpatterns = [
 
 	url(r'^register/', accounts_views.registerView, name = "register_url"),
 
-	url(r'^logout/', LogoutView.as_view(next_page="home"), name = "logout"), 
+	url(r'^logout/', LogoutView.as_view(next_page="home"), name = "logout")
 ]

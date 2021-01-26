@@ -9,7 +9,6 @@ from rest_framework import status
 from .serializers import UserSerializer, UserInformationSerializer
 from .utils import ErrorMessages, defaultUserStats, defaultUserInfo
 
-
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])

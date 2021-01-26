@@ -9,7 +9,6 @@ from .models import User_information, User_stats, Profile_Picture
 from .forms import SignUpForm, EditUserDataForm, getUserDataForm, pictureId
 from django.contrib.auth.views import LoginView
 
-
 @csrf_protect
 def registerView(request):
     if request.method == "POST":
