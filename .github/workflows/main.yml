@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Env Variables Definition
-        - run: |
+        run: |
           export APP_NAME=test-app-mfaria
           echo "::set-env name=APP_NAME::$APP_NAME"
       - name: Login to Heroku Container registry
