@@ -1,4 +1,5 @@
 from accounts.models import User_information, User_stats 
+from enum import Enum
 
 # THIS SECTION IS USEFUL TO SAVE ERROR MSGS 
 class ErrorMessages:
@@ -8,13 +9,15 @@ class ErrorMessages:
 # THIS SECTION IS USEFUL TO ADMINISTRATE TYPES OF ACHIEVEMENTS
 class AchievementsData:
     def __init__(self, type, goal):
-         self.type = type # String that represents what kind of achievement is
-         self.goal = goal # Number that represents the goal the achievement is trying to reach
+        self.type = type # String that represents what kind of achievement is
+        self.goal = goal # Number that represents the goal the achievement is trying to reach
 
 class AchievementsType(Enum):
-     TOTAL_NUMBER_OF_DONATIONS = 1
-     TOTAL_SUM_DONATIONS = 2
-     LARGEST_DONATION = 3
+    UNKNOWN = 0
+    TOTAL_NUMBER_OF_DONATIONS = 1
+    TOTAL_SUM_DONATIONS = 2
+    LARGEST_DONATION = 3
+    
 
 AchievementsDic = {
     "Donante" : AchievementsData(AchievementsType.TOTAL_NUMBER_OF_DONATIONS, 1),
@@ -32,7 +35,8 @@ AchievementsDic = {
     "Donacion estrella plata" : AchievementsData(AchievementsType.LARGEST_DONATION, 20),
     "Donacion estrella oro" : AchievementsData(AchievementsType.LARGEST_DONATION, 50),
     "Donacion estrella platino" : AchievementsData(AchievementsType.LARGEST_DONATION, 100),
-    "Donacion estrella diamante" : AchievementsData(AchievementsType.LARGEST_DONATION, 500)
+    "Donacion estrella diamante" : AchievementsData(AchievementsType.LARGEST_DONATION, 500),
+    "Donante recurrente": AchievementsData(AchievementsType.UNKNOWN, -1)
 }
 
 # THIS SECTION IS USEFUL TO CREATE DEFAULT INFORMATION

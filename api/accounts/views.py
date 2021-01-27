@@ -106,16 +106,17 @@ def achievements(request,user_id):
     achievs = Achievements.objects.all()
     user_achievs = []
 
-    # When this loop is done user_achievs will have a list of Models User_Achievements where the owner
+    # When this loop is done user_achievs will have a list of jsons where the Date
     # will be None if the user doesn't have the given achievemnt
     for ach_model in achievs:
         ach_name = ach_model.Name
         ach = AchievementsDic[ach_name]
         n = None
+        ach_date = None
 
         # If the user has the achievement 
         if User_Achievements.objects.filter(Owner=user_id,Achievement=ach_name).exists():
-            user_achievs.append(User_Achievements.objects.get(Owner=user_id,Achievement=ach_name))
+            ach_date = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name).Date
         # If the achievement checks total number of donations
         elif ach.type == AchievementsType.TOTAL_NUMBER_OF_DONATIONS:
             n = user_stats.Total_number_of_gifts
@@ -125,12 +126,12 @@ def achievements(request,user_id):
         # If the achievement checks the biggest donation
         elif ach.type == AchievementsType.LARGEST_DONATION:
             n = user_stats.Largest_gift
-        # For the moment this case is reserved for Donante recurrente
+        # For the moment this case is reserved for 'Donante recurrente' achievement
         else:
             f = True
             n_gifts = user_stats.Total_number_of_gifts
             f = f if n_gifts != None else False 
-            start = user_stats.First_gift_date
+            start = user_stats.Last_gift_date
             f = start if start != None else False
             last = date.today()
             
@@ -138,21 +139,20 @@ def achievements(request,user_id):
             f = False if months == 0 else f
  
             if(f and n_gifts/months >= 1):
-                new_ach = User_Achievements(Owner=user,Achievement=ach_model).save()
-                user_achievs.append(new_ach)
-            else:
-                user_achievs.append(User_Achievements(Owner=None,Achievement=ach_model))
-
+                User_Achievements(Owner=user,Achievement=ach_model).save()
+                new_ach = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name)
+                ach_date = new_ach.Date
+        
         # If the achiev was based on total number or total sum or largest donation
         if n != None:
             if ( n is not None and n>=ach.goal ):
-                new_ach = User_Achievements(Owner=user,Achievement=ach_model).save()
-                user_achievs.append(new_ach)
-            else:
-                user_achievs.append(User_Achievements(Owner=None,Achievement=ach_model))
+                User_Achievements(Owner=user,Achievement=ach_model).save()
+                new_ach = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name)
+                ach_date = new_ach.Date
 
-    user_achiev_serial = UserAchievementsSerializer(user_achievs, many=True)
-    return JsonResponse(user_achiev_serial.data, status=status.HTTP_200_OK)
+        user_achievs.append({"Date": ach_date, "Achievement": ach_name, "Description": ach_model.Description})
+            
+    return JsonResponse({"Achievements": user_achievs}, status=status.HTTP_200_OK)
         
 class Profile(APIView):
 
