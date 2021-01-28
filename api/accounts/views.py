@@ -105,9 +105,12 @@ def achievements(request,user_id):
     user_stats = User_stats.objects.get(Email=user.email)
     achievs = Achievements.objects.all()
     user_achievs = []
+    user_not_achievs = []
 
-    # When this loop is done user_achievs will have a list of jsons where the Date
-    # will be None if the user doesn't have the given achievemnt
+    # When this loop is done user_achievs will have a list of json achievements 
+    # made by the user
+    # On the other hand user_not_achievs will have a list of achievements not reached
+    # by the user
     for ach_model in achievs:
         ach_name = ach_model.Name
         ach = AchievementsDic[ach_name]
@@ -149,10 +152,13 @@ def achievements(request,user_id):
                 User_Achievements(Owner=user,Achievement=ach_model).save()
                 new_ach = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name)
                 ach_date = new_ach.Date
-
-        user_achievs.append({"Date": ach_date, "Achievement": ach_name, "Description": ach_model.Description})
+        
+        if ach_date == None:
+            user_not_achievs.append({"Achievement": ach_name, "Description": ach_model.Description})
+        else:
+            user_achievs.append({"Date": ach_date, "Achievement": ach_name, "Description": ach_model.Description})
             
-    return JsonResponse({"Achievements": user_achievs}, status=status.HTTP_200_OK)
+    return JsonResponse({"achieved": user_achievs, "not_achieved" : user_not_achievs}, status=status.HTTP_200_OK)
         
 class Profile(APIView):
 
