@@ -133,9 +133,9 @@ def achievements(request,user_id):
         else:
             f = True
             n_gifts = user_stats.Total_number_of_gifts
-            f = f if n_gifts != None else False 
+            f = f if n_gifts else False 
             start = user_stats.Last_gift_date
-            f = start if start != None else False
+            f = f if start else False
             last = date.today()
             
             months = ((last - start).days)//30
@@ -147,16 +147,15 @@ def achievements(request,user_id):
                 ach_date = new_ach.Date
         
         # If the achiev was based on total number or total sum or largest donation
-        if n != None:
-            if ( n is not None and n>=ach.goal ):
-                User_Achievements(Owner=user,Achievement=ach_model).save()
-                new_ach = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name)
-                ach_date = new_ach.Date
+        if n and n>=ach.goal:
+            User_Achievements(Owner=user,Achievement=ach_model).save()
+            new_ach = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name)
+            ach_date = new_ach.Date
         
-        if ach_date == None:
-            user_not_achievs.append({"Achievement": ach_name, "Description": ach_model.Description})
-        else:
+        if ach_date:
             user_achievs.append({"Date": ach_date, "Achievement": ach_name, "Description": ach_model.Description})
+        else:
+            user_not_achievs.append({"Achievement": ach_name, "Description": ach_model.Description})
             
     return JsonResponse({"achieved": user_achievs, "not_achieved" : user_not_achievs}, status=status.HTTP_200_OK)
         
