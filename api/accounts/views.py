@@ -153,9 +153,9 @@ def achievements(request,user_id):
             ach_date = new_ach.date
         
         if ach_date:
-            user_achievs.append({"Date": ach_date, "Achievement": ach_name, "Description": ach_model.description})
+            user_achievs.append({"date": ach_date, "achievement": ach_name, "description": ach_model.description})
         else:
-            user_not_achievs.append({"Achievement": ach_name, "Description": ach_model.description})
+            user_not_achievs.append({"achievement": ach_name, "description": ach_model.description})
             
     return JsonResponse({"achieved": user_achievs, "not_achieved" : user_not_achievs}, status=status.HTTP_200_OK)
         
