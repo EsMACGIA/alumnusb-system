@@ -119,7 +119,7 @@ def achievements(request,user_id):
 
         # If the user has the achievement 
         if UserAchievements.objects.filter(owner=user_id,achievement=ach_name).exists():
-            ach_date = UserAchievements.objects.get(owner=user_id,achievement=ach_name).Date
+            ach_date = UserAchievements.objects.get(owner=user_id,achievement=ach_name).date
         # If the achievement checks total number of donations
         elif ach.type == AchievementsType.TOTAL_NUMBER_OF_DONATIONS:
             n = user_stats.total_number_of_gifts
@@ -144,13 +144,13 @@ def achievements(request,user_id):
             if(f and n_gifts/months >= 1):
                 UserAchievements(owner=user,achievement=ach_model).save()
                 new_ach = UserAchievements.objects.get(owner=user_id,achievement=ach_name)
-                ach_date = new_ach.Date
+                ach_date = new_ach.date
         
         # If the achiev was based on total number or total sum or largest donation
         if n and n>=ach.goal:
             UserAchievements(owner=user,achievement=ach_model).save()
             new_ach = UserAchievements.objects.get(owner=user_id,achievement=ach_name)
-            ach_date = new_ach.Date
+            ach_date = new_ach.date
         
         if ach_date:
             user_achievs.append({"Date": ach_date, "Achievement": ach_name, "Description": ach_model.description})
