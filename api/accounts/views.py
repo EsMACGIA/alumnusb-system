@@ -125,10 +125,10 @@ def achievements(request,user_id):
             n = user_stats.total_number_of_gifts
         # If the achievement checks total sum of donations 
         elif ach.type == AchievementsType.TOTAL_SUM_DONATIONS:
-            n = user_stats.Total_gifts
+            n = user_stats.total_gifts
         # If the achievement checks the biggest donation
         elif ach.type == AchievementsType.LARGEST_DONATION:
-            n = user_stats.Largest_gift
+            n = user_stats.largest_gift
         # For the moment this case is reserved for 'Donante recurrente' achievement
         else:
             f = True
