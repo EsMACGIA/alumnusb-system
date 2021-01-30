@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth import authenticate, login
 
-from accounts.models import User_information, User_stats, Achievements, User_Achievements, Message, Profile_Picture
+from accounts.models import UserInformation, UserStats, Achievements, UserAchievements, Message, ProfilePicture
 from accounts.forms import SignUpForm, EditUserDataForm, getUserDataForm
 from django.contrib.auth.views import LoginView
 
@@ -25,10 +25,10 @@ def dashboard(request, username):
     
     #try to get the user data if exists
     usr = get_object_or_404(User, username=username)
-    user_info = get_object_or_404(User_information,  Email=usr.email)
+    user_info = get_object_or_404(UserInformation,  email=usr.email)
 
     #Try to get the user stats:
-    usr_stats = get_object_or_404(User_stats, Email=usr.email)
+    usr_stats = get_object_or_404(UserStats, email=usr.email)
 
     ach = Achievements.objects.all()
 
@@ -36,25 +36,25 @@ def dashboard(request, username):
     ach_by_lvl = []
 
     for x in ach:
-        if User_Achievements.objects.filter(Owner=usr.id,Achievement=x.Name).exists():
-            y = User_Achievements.objects.get(Owner=usr.id,Achievement=x.Name)
-            ach_by_date.append( (x,y.Date, "../../" + x.Picture.url) )
-            ach_by_lvl.append( (x, "../../" + x.Picture.url) )
+        if UserAchievements.objects.filter(owner=usr.id,achievement=x.name).exists():
+            y = UserAchievements.objects.get(owner=usr.id,achievement=x.name)
+            ach_by_date.append( (x,y.date, "../../" + x.picture.url) )
+            ach_by_lvl.append( (x, "../../" + x.picture.url) )
         
     ach_by_date.sort(key=lambda x:x[1], reverse=True)
-    ach_by_lvl.sort(key=lambda x:x[0].Level, reverse=True)
+    ach_by_lvl.sort(key=lambda x:x[0].level, reverse=True)
 
     ach_by_date = ach_by_date[:5]
     ach_by_lvl = ach_by_lvl[:5]
 
-    if Message.objects.filter(Page='Resumen').exists():
-        msg = Message.objects.get(Page='Resumen')
+    if Message.objects.filter(page='Resumen').exists():
+        msg = Message.objects.get(page='Resumen')
     else:
         msg = None
 
-    if ( user_info.Picture != None ):
-        pic = Profile_Picture.objects.get(id=user_info.Picture.id)
-        ret_pic = ( "/"+ pic.Picture.url , True, pic.id )
+    if ( user_info.picture != None ):
+        pic = ProfilePicture.objects.get(id=user_info.picture.id)
+        ret_pic = ( "/"+ pic.picture.url , True, pic.id )
     else:
         ret_pic = ( "" , False , -1)
 
@@ -76,10 +76,10 @@ def resume_chart(request):
     usr = get_object_or_404(User, username=request.user)
 
     #Try to get the user stats:
-    usr_stats = get_object_or_404(User_stats, Email=usr.email)
+    usr_stats = get_object_or_404(UserStats, email=usr.email)
 
     labels = ['Mejor donación', 'Donación promedio', 'Mejor donación en un año', 'Última donación']
-    data = [usr_stats.Largest_gift, usr_stats.Average_gift, usr_stats.Best_gift_year_total, usr_stats.Last_gift_date]
+    data = [usr_stats.largest_gift, usr_stats.average_gift, usr_stats.best_gift_year_total, usr_stats.last_gift_date]
 
 
     return JsonResponse(data = { 'labels': labels, 'data': data})
@@ -95,13 +95,13 @@ def user_stats(request, username):
     
     #try to get the user data if exists
     usr = get_object_or_404(User, username=username)
-    user_info = get_object_or_404(User_information,  Email=usr.email)
+    user_info = get_object_or_404(UserInformation,  email=usr.email)
 
     #Try to get the user stats:
-    usr_stats = get_object_or_404(User_stats, Email=usr.email)
-    if ( user_info.Picture != None ):
-        pic = Profile_Picture.objects.get(id=user_info.Picture.id)
-        ret_pic = ( "/"+ pic.Picture.url , True, pic.id )
+    usr_stats = get_object_or_404(UserStats, email=usr.email)
+    if ( user_info.picture != None ):
+        pic = ProfilePicture.objects.get(id=user_info.picture.id)
+        ret_pic = ( "/"+ pic.picture.url , True, pic.id )
     else:
         ret_pic = ( "" , False , -1)
 
@@ -125,9 +125,9 @@ def achievements(request, username):
     usr = get_object_or_404(User, username=username)
 
     #Try to get the user stats:
-    usr_stats = get_object_or_404(User_stats, Email=usr.email)
+    usr_stats = get_object_or_404(UserStats, email=usr.email)
 
-    usr_info = get_object_or_404(User_information,  Email=usr.email)
+    usr_info = get_object_or_404(UserInformation,  email=usr.email)
 
 
     A = Achievements.objects.all()
@@ -136,241 +136,241 @@ def achievements(request, username):
 
     for achiev in A:
 
-        if (achiev.Name == 'Numero donaciones bronce'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_number_of_gifts
+        if (achiev.name == 'Numero donaciones bronce'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_number_of_gifts
                 if ( n is not None and n>=5 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Numero donaciones plata'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_number_of_gifts
+        elif (achiev.name == 'Numero donaciones plata'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_number_of_gifts
                 if ( n is not None and n>=10 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Numero donaciones oro'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_number_of_gifts
+        elif (achiev.name == 'Numero donaciones oro'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_number_of_gifts
                 if ( n is not None and n>=20 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Numero donaciones platino'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_number_of_gifts
+        elif (achiev.name == 'Numero donaciones platino'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_number_of_gifts
                 if ( n is not None and n>=50 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Numero donaciones diamante'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_number_of_gifts
+        elif (achiev.name == 'Numero donaciones diamante'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_number_of_gifts
                 if ( n is not None and n>=100 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
 
-        elif (achiev.Name == 'Total donaciones bronce'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_gifts
+        elif (achiev.name == 'Total donaciones bronce'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_gifts
                 if ( n is not None and n>=100 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Total donaciones plata'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_gifts
+        elif (achiev.name == 'Total donaciones plata'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_gifts
                 if ( n is not None and n>=500 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Total donaciones oro'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_gifts
+        elif (achiev.name == 'Total donaciones oro'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_gifts
                 if ( n is not None and n>=1500 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Total donaciones platino'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_gifts
+        elif (achiev.name == 'Total donaciones platino'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_gifts
                 if ( n is not None and n>=3000 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Total donaciones diamante'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_gifts
+        elif (achiev.name == 'Total donaciones diamante'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_gifts
                 if ( n is not None and n>=5000 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
 
-        elif (achiev.Name == 'Donacion estrella bronce'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Largest_gift
+        elif (achiev.name == 'Donacion estrella bronce'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.largest_gift
                 if ( n is not None and n>=5 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Donacion estrella plata'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Largest_gift
+        elif (achiev.name == 'Donacion estrella plata'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.largest_gift
                 if ( n is not None and n>=20 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Donacion estrella oro'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Largest_gift
+        elif (achiev.name == 'Donacion estrella oro'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.largest_gift
                 if ( n is not None and n>=50 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Donacion estrella platino'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Largest_gift
+        elif (achiev.name == 'Donacion estrella platino'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.largest_gift
                 if ( n is not None and n>=100 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
-        elif (achiev.Name == 'Donacion estrella diamante'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Largest_gift
+        elif (achiev.name == 'Donacion estrella diamante'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.largest_gift
                 if ( n is not None and n>=500 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
 
-        elif (achiev.Name == 'Donante'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
-                n = usr_stats.Total_number_of_gifts
+        elif (achiev.name == 'Donante'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
+                n = usr_stats.total_number_of_gifts
                 if ( n is not None and n>=1 ):
-                    new = User_Achievements(Owner=usr,Achievement=achiev)
+                    new = UserAchievements(owner=usr,achievement=achiev)
                     new.save()
-                    user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                    ret.append( (achiev, user_ach.Date, True) )
+                    user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                    ret.append( (achiev, user_ach.date, True) )
                 else:
                     ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
 
-        elif (achiev.Name == 'Donante recurrente'):
-            if not User_Achievements.objects.filter(Owner=usr.id,Achievement=achiev.Name).exists():
+        elif (achiev.name == 'Donante recurrente'):
+            if not UserAchievements.objects.filter(owner=usr.id,achievement=achiev.name).exists():
                     f = 1
-                    n_gifts = usr_stats.Total_number_of_gifts
+                    n_gifts = usr_stats.total_number_of_gifts
                     if(n_gifts==None):
                         f = 0
-                    start = usr_stats.First_gift_date
+                    start = usr_stats.first_gift_date
                     if(start==None):
                         f = 0
                     last = date.today()
@@ -380,26 +380,26 @@ def achievements(request, username):
                     if months == 0 :
                         f = 0
                     if(f==1 and n_gifts/months >= 1):
-                        new = User_Achievements(Owner=usr,Achievement=achiev)
+                        new = UserAchievements(owner=usr,achievement=achiev)
                         new.save()
-                        user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                        ret.append( (achiev, user_ach.Date, True) )
+                        user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                        ret.append( (achiev, user_ach.date, True) )
                     else:
                         ret.append( (achiev, None, False) )
             else:
-                user_ach = User_Achievements.objects.get(Owner=usr.id,Achievement=achiev.Name)
-                ret.append( (achiev, user_ach.Date, True) )
+                user_ach = UserAchievements.objects.get(owner=usr.id,achievement=achiev.name)
+                ret.append( (achiev, user_ach.date, True) )
 
     ret2 = []
 
     for i in range(len(ret)):
-        ret2.append( (ret[i][0], ret[i][1], ret[i][2], "../../" + ret[i][0].Picture.url) )
+        ret2.append( (ret[i][0], ret[i][1], ret[i][2], "../../" + ret[i][0].picture.url) )
 
-    ret2.sort(key=lambda x:x[0].Level, reverse=True)
+    ret2.sort(key=lambda x:x[0].level, reverse=True)
 
-    if ( usr_info.Picture != None ):
-        pic = Profile_Picture.objects.get(id=usr_info.Picture.id)
-        ret_pic = ( "/"+ pic.Picture.url , True, pic.id )
+    if ( usr_info.picture != None ):
+        pic = ProfilePicture.objects.get(id=usr_info.picture.id)
+        ret_pic = ( "/"+ pic.picture.url , True, pic.id )
     else:
         ret_pic = ( "" , False , -1)
 
@@ -420,7 +420,7 @@ def user_achievs(request, username):
         return redirect('home')
 
     usr = get_object_or_404(User, username=username)
-    user_info = get_object_or_404(User_information,  Email=usr.email)
+    user_info = get_object_or_404(UserInformation,  email=usr.email)
 
     return render(request, 'dashboard/user_achievements.html', {'User_information': user_info})
 

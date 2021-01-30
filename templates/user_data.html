@@ -28,18 +28,18 @@
                         {{prof_pic_mid}}
                         <div class="profile-head">
                                     <h5>
-                                        {{ User_information.First_name}}  
-                                        {{ User_information.Middle_name }}
-                                        {{ User_information.Last_name}} 
+                                        {{ User_information.first_name}}  
+                                        {{ User_information.middle_name }}
+                                        {{ User_information.last_name}} 
                                         
                                     </h5>
                                     <h6>
                                         {{ User_information.get_Undergrad_degree_display }}
                                     </h6>
-                                    {% if User_information.Donor == 1 %}
+                                    {% if User_information.donor == 1 %}
                                     <p class="proile-rating">Donor &#127775; </p>
                                     {% endif %}
-                                    {% if User_information.USB_alumn == 1%}
+                                    {% if User_information.usb_alumn == 1%}
                                     <p> USB Alumn &#127775; </p>
                                     {% endif%}
                             <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -58,18 +58,18 @@
                         <div class="profile-work">
                             <strong>SOCIAL MEDIA:</strong>
                             <ul>
-                                <li>Twitter: {{User_information.Twitter_account}} </li>
-                                <li>Instagram: {{User_information.Instagram_account}} </li>
+                                <li>Twitter: {{User_information.twitter_account}} </li>
+                                <li>Instagram: {{User_information.instagram_account}} </li>
                             </ul>
                             
                             <strong>CONTACT INFO:</strong>
                             <ul>
-                                <li>Mailing city: {{ User_information.Mailing_city}}</li>
-                                <li>Mailing state: {{ User_information.Mailing_state}}</li>
+                                <li>Mailing city: {{ User_information.mailing_city}}</li>
+                                <li>Mailing state: {{ User_information.mailing_state}}</li>
                                 <li>Mailing country: {{ User_information.get_Mailing_country_display }}</li>
-                                <li>Mobile number: {{ User_information.Mobile }}</li>
-                                <li>Email: {{User_information.Email}} </li>
-                                <li>Work Email: {{User_information.Work_email}} </li>
+                                <li>Mobile number: {{ User_information.mobile }}</li>
+                                <li>Email: {{User_information.email}} </li>
+                                <li>Work Email: {{User_information.work_email}} </li>
                                 
                             </ul>
                         </div>
@@ -82,7 +82,7 @@
                                                 <label><strong> Birth date: </strong></label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p> {{User_information.Birthdate}} </p>
+                                                <p> {{User_information.birthdate}} </p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -90,7 +90,7 @@
                                                 <label><strong> Cohorte: </strong></label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>{{User_information.Cohorte}}</p>
+                                                <p>{{User_information.cohorte}}</p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -98,7 +98,7 @@
                                                 <label><strong> Carnet: </strong></label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p>{{User_information.Carnet}}</p>
+                                                <p>{{User_information.carnet}}</p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -114,7 +114,7 @@
                                                 <label><strong> Graduate Degree: </strong></label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p> {{User_information.Graduate_degree}} </p>
+                                                <p> {{User_information.graduate_degree}} </p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -122,7 +122,7 @@
                                                 <label> <strong> Graduate Campus: </strong> </label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p> {{User_information.Graduate_campus}} </p>
+                                                <p> {{User_information.graduate_campus}} </p>
                                             </div>
                                         </div>
 
@@ -131,7 +131,7 @@
                                                 <label> <strong> Workplace: </strong> </label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p> {{User_information.Workplace}} </p>
+                                                <p> {{User_information.workplace}} </p>
                                             </div>
                                         </div>
                             </div>

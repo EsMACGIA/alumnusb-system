@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from accounts.models import User_information, User_stats, Profile_Picture
+from accounts.models import UserInformation, UserStats, ProfilePicture
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.views import APIView
@@ -36,11 +36,11 @@ def register(request):
     user_serializer.save()
 
     # Create user default information
-    if not User_information.objects.filter(Email=email).exists():
+    if not UserInformation.objects.filter(Email=email).exists():
         user_info = defaultUserInfo(email)
         user_info.save()
 
-    if not User_stats.objects.filter(Email=email).exists():
+    if not UserStats.objects.filter(Email=email).exists():
         user_stat = defaultUserStats(email)
         user_stat.save()
 
@@ -72,7 +72,7 @@ def stats(request,user_id):
     except User.DoesNotExist:
         return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-    user_stats = User_stats.objects.get(Email=user.email)
+    user_stats = UserStats.objects.get(Email=user.email)
 
     return JsonResponse(UserStatsSerializer(user_stats).data, status=status.HTTP_200_OK)
 
@@ -105,7 +105,7 @@ class Profile(APIView):
         except User.DoesNotExist:
             return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-        user_info = User_information.objects.get(Email=user.email)
+        user_info = UserInformation.objects.get(Email=user.email)
 
         return JsonResponse(UserInformationSerializer(user_info).data, status=status.HTTP_200_OK)
 
@@ -114,7 +114,7 @@ class Profile(APIView):
         Administrates account edition requests. 
         
         Parameters: 
-        request : PUT request with user User_information data except Picture, Email and Codigo_Alumn_USB
+        request : PUT request with user UserInformation data except Picture, Email and Codigo_Alumn_USB
         (int) user_id: requested user's id
 
         Returns: 
@@ -134,7 +134,7 @@ class Profile(APIView):
         except User.DoesNotExist:
             return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-        user_info = User_information.objects.get(Email=user.email)
+        user_info = UserInformation.objects.get(Email=user.email)
         user_info_serial = UserInformationSerializer(user_info, data = form_content, partial=True)
 
         # Check for errors in the form 

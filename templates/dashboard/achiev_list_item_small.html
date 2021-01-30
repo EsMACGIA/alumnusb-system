@@ -24,7 +24,7 @@
             <a class="" href="#" data-toggle="modal" data-target="#{{modalId}}"
                style="text-decoration: none;">
                 <h4 class="text-gray-800 font-weight-bold text-{{color}}">
-                    {{achiev.0.Name}}  
+                    {{achiev.0.name}}  
                     {% if achiev.2 %}
                         <i class="fas fa-medal"></i>
                     {% endif %}
@@ -32,26 +32,26 @@
 
             </a>
             <!--Description-->
-            {% if  achiev.0.Description|length == 0 %}
+            {% if  achiev.0.description|length == 0 %}
                 <span>(sin descripción)</span>
-            {% elif  achiev.0.Description|length <= 120 %}
-                <span> {{achiev.0.Description}} </span>
+            {% elif  achiev.0.description|length <= 120 %}
+                <span> {{achiev.0.description}} </span>
             {% else %}
-                <span> {{achiev.0.Description|truncatechars:120}}... </span>
+                <span> {{achiev.0.description|truncatechars:120}}... </span>
             {% endif %}
         </div>
 
         <!--Level Badge-->
         <div class="">
-            {% if achiev.0.Level == 1 %}
+            {% if achiev.0.level == 1 %}
             <span class="badge-primary rounded p-1 my-6"> Level 1  </span>
-            {% elif achiev.0.Level == 2 %}
+            {% elif achiev.0.level == 2 %}
             <span class="badge-info rounded p-1 my-6"> Level 2  </span>
-            {% elif achiev.0.Level == 3 %}
+            {% elif achiev.0.level == 3 %}
             <span class="badge-warning rounded p-1 my-6"> Level 3  </span>
-            {% elif achiev.0.Level == 4 %}
+            {% elif achiev.0.level == 4 %}
             <span class="badge-purple rounded p-1 my-6"> Level 4  </span>
-            {% elif achiev.0.Level == 5 %}
+            {% elif achiev.0.level == 5 %}
             <span class="badge-danger rounded p-1 my-6"> Level 5  </span>
             {% endif %}
         </div>
