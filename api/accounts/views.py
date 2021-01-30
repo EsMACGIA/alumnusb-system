@@ -1,13 +1,14 @@
 from django.shortcuts import render
-from accounts.models import UserInformation, UserStats, ProfilePicture
+from accounts.models import UserInformation, UserStats, ProfilePicture, Achievements, UserAchievements
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.views import APIView
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
-from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer
-from .utils import ErrorMessages, defaultUserStats, defaultUserInfo
+from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer, UserAchievementsSerializer
+from .utils import ErrorMessages, defaultUserStats, defaultUserInfo, AchievementsDic, AchievementsType
+from datetime import date
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -36,11 +37,11 @@ def register(request):
     user_serializer.save()
 
     # Create user default information
-    if not UserInformation.objects.filter(Email=email).exists():
+    if not UserInformation.objects.filter(email=email).exists():
         user_info = defaultUserInfo(email)
         user_info.save()
 
-    if not UserStats.objects.filter(Email=email).exists():
+    if not UserStats.objects.filter(email=email).exists():
         user_stat = defaultUserStats(email)
         user_stat.save()
 
@@ -72,10 +73,92 @@ def stats(request,user_id):
     except User.DoesNotExist:
         return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-    user_stats = UserStats.objects.get(Email=user.email)
+    user_stats = UserStats.objects.get(email=user.email)
 
     return JsonResponse(UserStatsSerializer(user_stats).data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def achievements(request,user_id):
+
+    """ 
+    Administrates accounts achievements retrieving requests. 
+    
+    Parameters: 
+    request : GET request 
+    (int) user_id: requested user's id
+    
+    Returns: 
+    Json with requested user's achievements
+  
+    """
+    
+    # User requested and requesting user must match
+    if user_id != request.user.id:
+        return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
+
+    # User must exist
+    try:
+        user =  User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
+    
+    user_stats = UserStats.objects.get(email=user.email)
+    achievs = Achievements.objects.all()
+    user_achievs = []
+    user_not_achievs = []
+
+    # When this loop is done user_achievs will have a list of json achievements 
+    # made by the user
+    # On the other hand user_not_achievs will have a list of achievements not reached
+    # by the user
+    for ach_model in achievs:
+        ach_name = ach_model.name
+        ach = AchievementsDic[ach_name]
+        n = None
+        ach_date = None
+
+        # If the user has the achievement 
+        if UserAchievements.objects.filter(owner=user_id,achievement=ach_name).exists():
+            ach_date = UserAchievements.objects.get(owner=user_id,achievement=ach_name).Date
+        # If the achievement checks total number of donations
+        elif ach.type == AchievementsType.TOTAL_NUMBER_OF_DONATIONS:
+            n = user_stats.total_number_of_gifts
+        # If the achievement checks total sum of donations 
+        elif ach.type == AchievementsType.TOTAL_SUM_DONATIONS:
+            n = user_stats.Total_gifts
+        # If the achievement checks the biggest donation
+        elif ach.type == AchievementsType.LARGEST_DONATION:
+            n = user_stats.Largest_gift
+        # For the moment this case is reserved for 'Donante recurrente' achievement
+        else:
+            f = True
+            n_gifts = user_stats.total_number_of_gifts
+            f = f if n_gifts else False 
+            start = user_stats.last_gift_date
+            f = f if start else False
+            last = date.today()
+            
+            months = ((last - start).days)//30
+            f = False if months == 0 else f
+ 
+            if(f and n_gifts/months >= 1):
+                UserAchievements(owner=user,achievement=ach_model).save()
+                new_ach = UserAchievements.objects.get(owner=user_id,achievement=ach_name)
+                ach_date = new_ach.Date
+        
+        # If the achiev was based on total number or total sum or largest donation
+        if n and n>=ach.goal:
+            UserAchievements(owner=user,achievement=ach_model).save()
+            new_ach = UserAchievements.objects.get(owner=user_id,achievement=ach_name)
+            ach_date = new_ach.Date
+        
+        if ach_date:
+            user_achievs.append({"Date": ach_date, "Achievement": ach_name, "Description": ach_model.description})
+        else:
+            user_not_achievs.append({"Achievement": ach_name, "Description": ach_model.description})
+            
+    return JsonResponse({"achieved": user_achievs, "not_achieved" : user_not_achievs}, status=status.HTTP_200_OK)
+        
 class Profile(APIView):
 
     """
@@ -105,7 +188,7 @@ class Profile(APIView):
         except User.DoesNotExist:
             return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-        user_info = UserInformation.objects.get(Email=user.email)
+        user_info = UserInformation.objects.get(email=user.email)
 
         return JsonResponse(UserInformationSerializer(user_info).data, status=status.HTTP_200_OK)
 
@@ -134,7 +217,7 @@ class Profile(APIView):
         except User.DoesNotExist:
             return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-        user_info = UserInformation.objects.get(Email=user.email)
+        user_info = UserInformation.objects.get(email=user.email)
         user_info_serial = UserInformationSerializer(user_info, data = form_content, partial=True)
 
         # Check for errors in the form 

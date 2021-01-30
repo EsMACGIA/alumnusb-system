@@ -108,20 +108,20 @@ WSGI_APPLICATION = 'alumnusb_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DB_NAME = os.environ['DB_NAME'] if 'DB_NAME' in os.environ else 'alumnusb_db'
-DB_USER = os.environ['DB_USER'] if 'DB_USER' in os.environ else 'alumnusb_admin'
-DB_PASSWORD = os.environ['DB_PASSWORD'] if 'DB_PASSWORD' in os.environ else 'qwerqwer'
-DB_HOST = os.environ['DB_HOST'] if 'DB_HOST' in os.environ else 'localhost'
-DB_PORT = os.environ['DB_PORT'] if 'DB_PORT' in os.environ else '5432'
+DB_NAME = os.getenv('DB_NAME', 'alumnusb_db')
+DB_USER = os.getenv('DB_USER', 'alumnusb_admin') 
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'qwerqwer') 
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '5432')
 
 DATABASES = {
      'default': {
          'ENGINE': 'django.db.backends.postgresql_psycopg2',
-         'NAME': os.environ['DB_NAME'],
-         'USER': os.environ['DB_USER'],
-         'PASSWORD': os.environ['DB_PASSWORD'],
-         'HOST': os.environ['DB_HOST'],
-         'PORT': os.environ['DB_PORT'],
+         'NAME': DB_NAME,
+         'USER': DB_USER,
+         'PASSWORD': DB_PASSWORD,
+         'HOST': DB_HOST,
+         'PORT': DB_PORT,
      }
 }
 
@@ -208,14 +208,3 @@ JET_THEMES = [
         'title': 'Light Gray'
     }
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ),
-}
