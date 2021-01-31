@@ -1,9 +1,45 @@
 from accounts.models import User_information, User_stats 
+from enum import Enum
 
+# THIS SECTION IS USEFUL TO SAVE ERROR MSGS 
 class ErrorMessages:
     UserNotFound = {"error" : "User does not exist"}
     UnauthAccesAccount = {"error" : "Unauthorized access to another user's account"}
 
+# THIS SECTION IS USEFUL TO ADMINISTRATE TYPES OF ACHIEVEMENTS
+class AchievementsData:
+    def __init__(self, type, goal):
+        self.type = type # String that represents what kind of achievement is
+        self.goal = goal # Number that represents the goal the achievement is trying to reach
+
+class AchievementsType(Enum):
+    UNKNOWN = 0
+    TOTAL_NUMBER_OF_DONATIONS = 1
+    TOTAL_SUM_DONATIONS = 2
+    LARGEST_DONATION = 3
+    
+
+AchievementsDic = {
+    "Donante" : AchievementsData(AchievementsType.TOTAL_NUMBER_OF_DONATIONS, 1),
+    "Numero donaciones bronce" : AchievementsData(AchievementsType.TOTAL_NUMBER_OF_DONATIONS, 5),
+    "Numero donaciones plata" : AchievementsData(AchievementsType.TOTAL_NUMBER_OF_DONATIONS, 10),
+    "Numero donaciones oro" : AchievementsData(AchievementsType.TOTAL_NUMBER_OF_DONATIONS, 20),
+    "Numero donaciones platino" : AchievementsData(AchievementsType.TOTAL_NUMBER_OF_DONATIONS, 50),
+    "Numero donaciones diamante" : AchievementsData(AchievementsType.TOTAL_NUMBER_OF_DONATIONS, 100),
+    "Total donaciones bronce" : AchievementsData(AchievementsType.TOTAL_SUM_DONATIONS, 100),
+    "Total donaciones plata" : AchievementsData(AchievementsType.TOTAL_SUM_DONATIONS, 500),
+    "Total donaciones oro" : AchievementsData(AchievementsType.TOTAL_SUM_DONATIONS, 1500),
+    "Total donaciones platino" : AchievementsData(AchievementsType.TOTAL_SUM_DONATIONS, 3000),
+    "Total donaciones diamante" : AchievementsData(AchievementsType.TOTAL_SUM_DONATIONS, 5000),
+    "Donacion estrella bronce" : AchievementsData(AchievementsType.LARGEST_DONATION, 5),
+    "Donacion estrella plata" : AchievementsData(AchievementsType.LARGEST_DONATION, 20),
+    "Donacion estrella oro" : AchievementsData(AchievementsType.LARGEST_DONATION, 50),
+    "Donacion estrella platino" : AchievementsData(AchievementsType.LARGEST_DONATION, 100),
+    "Donacion estrella diamante" : AchievementsData(AchievementsType.LARGEST_DONATION, 500),
+    "Donante recurrente": AchievementsData(AchievementsType.UNKNOWN, -1)
+}
+
+# THIS SECTION IS USEFUL TO CREATE DEFAULT INFORMATION
 def defaultUserInfo(email):
     """ 
     Returns a default User_information model filled with default data and the given email. 

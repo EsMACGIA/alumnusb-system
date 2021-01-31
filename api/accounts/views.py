@@ -1,13 +1,14 @@
 from django.shortcuts import render
-from accounts.models import User_information, User_stats, Profile_Picture
+from accounts.models import User_information, User_stats, Profile_Picture, Achievements, User_Achievements
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.views import APIView
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
-from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer
-from .utils import ErrorMessages, defaultUserStats, defaultUserInfo
+from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer, UserAchievementsSerializer
+from .utils import ErrorMessages, defaultUserStats, defaultUserInfo, AchievementsDic, AchievementsType
+from datetime import date
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -76,6 +77,88 @@ def stats(request,user_id):
 
     return JsonResponse(UserStatsSerializer(user_stats).data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def achievements(request,user_id):
+
+    """ 
+    Administrates accounts achievements retrieving requests. 
+    
+    Parameters: 
+    request : GET request 
+    (int) user_id: requested user's id
+    
+    Returns: 
+    Json with requested user's achievements
+  
+    """
+    
+    # User requested and requesting user must match
+    if user_id != request.user.id:
+        return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
+
+    # User must exist
+    try:
+        user =  User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
+    
+    user_stats = User_stats.objects.get(Email=user.email)
+    achievs = Achievements.objects.all()
+    user_achievs = []
+    user_not_achievs = []
+
+    # When this loop is done user_achievs will have a list of json achievements 
+    # made by the user
+    # On the other hand user_not_achievs will have a list of achievements not reached
+    # by the user
+    for ach_model in achievs:
+        ach_name = ach_model.Name
+        ach = AchievementsDic[ach_name]
+        n = None
+        ach_date = None
+
+        # If the user has the achievement 
+        if User_Achievements.objects.filter(Owner=user_id,Achievement=ach_name).exists():
+            ach_date = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name).Date
+        # If the achievement checks total number of donations
+        elif ach.type == AchievementsType.TOTAL_NUMBER_OF_DONATIONS:
+            n = user_stats.Total_number_of_gifts
+        # If the achievement checks total sum of donations 
+        elif ach.type == AchievementsType.TOTAL_SUM_DONATIONS:
+            n = user_stats.Total_gifts
+        # If the achievement checks the biggest donation
+        elif ach.type == AchievementsType.LARGEST_DONATION:
+            n = user_stats.Largest_gift
+        # For the moment this case is reserved for 'Donante recurrente' achievement
+        else:
+            f = True
+            n_gifts = user_stats.Total_number_of_gifts
+            f = f if n_gifts else False 
+            start = user_stats.Last_gift_date
+            f = f if start else False
+            last = date.today()
+            
+            months = ((last - start).days)//30
+            f = False if months == 0 else f
+ 
+            if(f and n_gifts/months >= 1):
+                User_Achievements(Owner=user,Achievement=ach_model).save()
+                new_ach = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name)
+                ach_date = new_ach.Date
+        
+        # If the achiev was based on total number or total sum or largest donation
+        if n and n>=ach.goal:
+            User_Achievements(Owner=user,Achievement=ach_model).save()
+            new_ach = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name)
+            ach_date = new_ach.Date
+        
+        if ach_date:
+            user_achievs.append({"Date": ach_date, "Achievement": ach_name, "Description": ach_model.Description})
+        else:
+            user_not_achievs.append({"Achievement": ach_name, "Description": ach_model.Description})
+            
+    return JsonResponse({"achieved": user_achievs, "not_achieved" : user_not_achievs}, status=status.HTTP_200_OK)
+        
 class Profile(APIView):
 
     """
