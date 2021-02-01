@@ -31,44 +31,44 @@ def profile_upload(request):
 				error = 'Formato incorrecto de CSV'
 				return render(request, template, {'title':error})
 			
-			User_information.objects.filter(Email=column[9]).delete()
-			User_stats.objects.filter(Email=column[9]).delete()
+			UserInformation.objects.filter(email=column[9]).delete()
+			UserStats.objects.filter(email=column[9]).delete()
 			
-			created2 = User_information.objects.update_or_create(
-			First_name=column[1],
-			Middle_name=column[2],
-			Last_name=column[3],
-			Mailing_city=column[4],
-			Mailing_state=column[5],
-			USB_alumn=is_bool(column[6]),
-			Codigo_Alumn_USB=column[7],
-			Email=column[9],
-			Mobile=column[10],
-			Cohorte=is_int(column[11]),
-			Birthdate=transform_date(column[12]),
-			Age=is_int(column[13]),
-			Graduate_degree=column[15],
-			Carnet=is_int(column[16]),
-			Graduate_campus=column[18],
-			Work_email=column[19],
-			Workplace=column[20],
-			Donor=is_bool(column[21]),
-			Social_networks=column[28],
-			Twitter_account=column[29],
-			Instagram_account=column[30]
+			created2 = UserInformation.objects.update_or_create(
+			first_name=column[1],
+			middle_name=column[2],
+			last_name=column[3],
+			mailing_city=column[4],
+			mailing_state=column[5],
+			usb_alumn=is_bool(column[6]),
+			codigo_alumn_usb=column[7],
+			email=column[9],
+			mobile=column[10],
+			cohorte=is_int(column[11]),
+			birthdate=transform_date(column[12]),
+			age=is_int(column[13]),
+			graduate_degree=column[15],
+			carnet=is_int(column[16]),
+			graduate_campus=column[18],
+			work_email=column[19],
+			workplace=column[20],
+			donor=is_bool(column[21]),
+			social_networks=column[28],
+			twitter_account=column[29],
+			instagram_account=column[30]
 			)
 
-			created = User_stats.objects.update_or_create(
-			Email=column[9],
-			Average_gift=is_float(column[22]),
-			Largest_gift=is_float(column[23]),
-			Smallest_gift=is_float(column[24]),
-			Total_gifts=is_float(column[25]),
-			Best_gift_year_total=is_float(column[26]),
-			Best_gift_year=is_int(column[27]),
-			First_gift_date=transform_date(column[31]),
-			Last_gift_date=transform_date(column[32]),
-			Total_number_of_gifts=is_int(column[33])
+			created = UserStats.objects.update_or_create(
+			email=column[9],
+			average_gift=is_float(column[22]),
+			largest_gift=is_float(column[23]),
+			smallest_gift=is_float(column[24]),
+			total_gifts=is_float(column[25]),
+			best_gift_year_total=is_float(column[26]),
+			best_gift_year=is_int(column[27]),
+			first_gift_date=transform_date(column[31]),
+			last_gift_date=transform_date(column[32]),
+			total_number_of_gifts=is_int(column[33])
 			)
 		return render(request, template, {'title':"La carga fue exitosa"})
 	else:

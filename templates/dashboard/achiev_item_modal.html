@@ -8,22 +8,22 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <!--choose the correct header color-->
-        {% if mAchiev.0.Level == 1 %}
+        {% if mAchiev.0.level == 1 %}
         <div class="modal-header text-light bg-primary">
-        {% elif mAchiev.0.Level == 2 %}
+        {% elif mAchiev.0.level == 2 %}
         <div class="modal-header text-light bg-info">
-        {% elif mAchiev.0.Level == 3 %}
+        {% elif mAchiev.0.level == 3 %}
         <div class="modal-header text-light bg-warning">
-        {% elif mAchiev.0.Level == 4 %}
+        {% elif mAchiev.0.level == 4 %}
         <div class="modal-header text-light bg-purple">
-        {% elif mAchiev.0.Level == 5 %}
+        {% elif mAchiev.0.level == 5 %}
         <div class="modal-header text-light bg-danger">
         {% else %}
         <div class="modal-header">
         {% endif %}
 
             <h5 class="modal-title" id="exampleModalLabel">
-              {{mAchiev.0.Name}}                 
+              {{mAchiev.0.name}}                 
               {% if mAchiev.2 %}
                 <i class="fas fa-medal"></i>
               {% endif %}
@@ -43,7 +43,7 @@
             <!--Description-->
             <div class="">
                 <strong>Descripción:</strong><br><br>
-                <div class="border p-2"> <p class="m-auto"> {{mAchiev.0.Description}} </p> </div>
+                <div class="border p-2"> <p class="m-auto"> {{mAchiev.0.description}} </p> </div>
             </div>
             <!--Level badge-->
             <div class="my-3 d-flex flex-row">
@@ -52,15 +52,15 @@
                 </div>
                 <div class="mx-1">
                     <!--choose the correct header color-->
-                    {% if mAchiev.0.Level == 1 %}
+                    {% if mAchiev.0.level == 1 %}
                     <span class="p-2 m-6 rounded badge-primary">Nivel: 1</span>
-                    {% elif mAchiev.0.Level == 2 %}
+                    {% elif mAchiev.0.level == 2 %}
                     <span class="p-2 rounded badge-info">Nivel: 2</span>
-                    {% elif mAchiev.0.Level == 3 %}
+                    {% elif mAchiev.0.level == 3 %}
                     <span class="p-2 rounded badge-warning">Nivel: 3</span>
-                    {% elif mAchiev.0.Level == 4 %}
+                    {% elif mAchiev.0.level == 4 %}
                     <span class="p-2 rounded badge-purple">Nivel: 4</span>
-                    {% elif mAchiev.0.Level == 5 %}
+                    {% elif mAchiev.0.level == 5 %}
                     <span class="p-2 rounded badge-danger">Nivel: 5</span>
                     {% else %}
                     <span class="p-2 rounded badge-light">Nivel: ???</span>
@@ -80,19 +80,19 @@
             {% endif %}
         </div>
         <!--choose the correct footer color-->
-        {% if mAchiev.0.Level == 1 %}
+        {% if mAchiev.0.level == 1 %}
         <div class="modal-footer text-light bg-primary">
             <button class="btn btn-light text-primary " type="button" data-dismiss="modal">Cancelar</button>
-        {% elif mAchiev.0.Level == 2 %}
+        {% elif mAchiev.0.level == 2 %}
         <div class="modal-footer text-light bg-info">
             <button class="btn btn-light text-info" type="button" data-dismiss="modal">Cancelar</button>
-        {% elif mAchiev.0.Level == 3 %}
+        {% elif mAchiev.0.level == 3 %}
         <div class="modal-footer text-light bg-warning">
             <button class="btn btn-light text-warning" type="button" data-dismiss="modal">Cancelar</button>
-        {% elif mAchiev.0.Level == 4 %}
+        {% elif mAchiev.0.level == 4 %}
         <div class="modal-footer text-light bg-purple">
             <button class="btn btn-light text-purple" type="button" data-dismiss="modal">Cancelar</button>
-        {% elif mAchiev.0.Level == 5 %}
+        {% elif mAchiev.0.level == 5 %}
         <div class="modal-footer text-light bg-danger">
             <button class="btn btn-light text-danger" type="button" data-dismiss="modal">Cancelar</button>
         {% else %}

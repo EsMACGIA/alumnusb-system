@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import password_validation
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
-from .models import User_information
+from .models import UserInformation
 from django.contrib.auth.views import LoginView
 from accounts.utils import COUNTRIES, UndergraduateDegreeChoice, CampusChoice
 
@@ -60,7 +60,7 @@ class LoginForm(LoginView):
 
 
 class EditUserDataForm(forms.ModelForm):
-    First_name = forms.CharField(
+    first_name = forms.CharField(
         label='Primer Nombre', 
         max_length=30,
         required=True,
@@ -68,7 +68,7 @@ class EditUserDataForm(forms.ModelForm):
         error_messages={'required': 'Por favor ingresa tu nombre.'},
     )
 
-    Middle_name = forms.CharField(
+    middle_name = forms.CharField(
         label='Segundo Nombre', 
         max_length=30,
         required=True,
@@ -76,7 +76,7 @@ class EditUserDataForm(forms.ModelForm):
         error_messages={'required': 'Por favor ingresa tu segundo nombre.'},
     )
 
-    Last_name = forms.CharField(
+    last_name = forms.CharField(
         label='Apellido', 
         max_length=30,
         required=True,
@@ -84,7 +84,7 @@ class EditUserDataForm(forms.ModelForm):
         error_messages={'required': 'Por favor ingresa tu apellido.'},
     )
 
-    Age = forms.IntegerField(
+    age = forms.IntegerField(
         label='Edad', 
         required=True,
         widget=forms.NumberInput(attrs={'class': "form-control", 'placeholder': '18', 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
@@ -93,7 +93,7 @@ class EditUserDataForm(forms.ModelForm):
         max_value=105,
     )
 
-    Mobile = forms.CharField(
+    mobile = forms.CharField(
         label='Número de Teléfono', 
         required=True,
         widget=forms.TextInput(attrs={'class': "form-control", 'placeholder': '581234567890', 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
@@ -101,7 +101,7 @@ class EditUserDataForm(forms.ModelForm):
         help_text="Ingresa tu número de teléfono sin guiones (-) ni más (+)",
     )
 
-    Birthdate = forms.DateField(
+    birthdate = forms.DateField(
         label='Fecha de Nacimiento', 
         required=True,
         widget=forms.DateInput(attrs={'class': "form-control ",'type':'date', 'placeholder': '581234567890', 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
@@ -109,7 +109,7 @@ class EditUserDataForm(forms.ModelForm):
         help_text="Utilice la ventana desplegable para seleccionar su fecha.",
     )
 
-    Mailing_city = forms.CharField(
+    mailing_city = forms.CharField(
         label='Ciudad', 
         max_length=30,
         required=True,
@@ -117,7 +117,7 @@ class EditUserDataForm(forms.ModelForm):
         error_messages={'required': 'Por favor ingresa tu ciudad de envío de correo.'},
     )
 
-    Mailing_state = forms.CharField(
+    mailing_state = forms.CharField(
         label='Estado', 
         max_length=30,
         required=True,
@@ -125,7 +125,7 @@ class EditUserDataForm(forms.ModelForm):
         error_messages={'required': 'Por favor ingresa tu estado de envío de correo.'},
     )
 
-    Mailing_country = forms.ChoiceField(
+    mailing_country = forms.ChoiceField(
         label='País', 
         required=True,
         widget=forms.Select(attrs={'class': "form-control dropdown", 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
@@ -133,13 +133,13 @@ class EditUserDataForm(forms.ModelForm):
         choices=COUNTRIES,
     )
 
-    USB_alumn = forms.BooleanField(
+    usb_alumn = forms.BooleanField(
         label='Estudiante de la USB', 
         required=True,
         error_messages={'required': 'Por favor ingresa si eres o no estudiantes de la USB.'},
     )
 
-    Cohorte = forms.IntegerField(
+    cohorte = forms.IntegerField(
         label='Cohorte', 
         required=True,
         widget=forms.NumberInput(attrs={'class': "form-control", 'placeholder': '00', 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
@@ -149,7 +149,7 @@ class EditUserDataForm(forms.ModelForm):
         help_text="Por ingrese solamente el número de su cohorte (sin carnet).",
     )
 
-    Carnet = forms.IntegerField(
+    carnet = forms.IntegerField(
         label='Carnet', 
         required=True,
         widget=forms.NumberInput(attrs={'class': "form-control", 'placeholder': '10000', 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
@@ -159,7 +159,7 @@ class EditUserDataForm(forms.ModelForm):
         help_text="Por ingrese solamente el número de su carnet (sin cohorte).",
     )
 
-    Undergrad_degree = forms.ChoiceField(
+    undergrad_degree = forms.ChoiceField(
         label='Pregrado', 
         required=True,
         widget=forms.Select(attrs={'class': "form-control dropdown", 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
@@ -167,7 +167,7 @@ class EditUserDataForm(forms.ModelForm):
         choices=[(tag.name, tag.value) for tag in UndergraduateDegreeChoice],
     )
 
-    USB_undergrad_campus = forms.ChoiceField(
+    usb_undergrad_campus = forms.ChoiceField(
         label='Campus Pregrado USB', 
         required=True,
         widget=forms.Select(attrs={'class': "form-control dropdown", 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
@@ -175,7 +175,7 @@ class EditUserDataForm(forms.ModelForm):
         choices=[(tag.name, tag.value) for tag in CampusChoice],
     )
 
-    Graduate_degree = forms.CharField(
+    graduate_degree = forms.CharField(
         label='Maestría', 
         max_length=30,
         required=True,
@@ -183,7 +183,7 @@ class EditUserDataForm(forms.ModelForm):
         error_messages={'required': 'Por favor ingresa tu título de maestría, si no tienes puedes colocar "None".'},
     )
 
-    Graduate_campus = forms.CharField(
+    graduate_campus = forms.CharField(
         label='Campus Maestría', 
         max_length=30,
         required=True,
@@ -191,41 +191,41 @@ class EditUserDataForm(forms.ModelForm):
         error_messages={'required': 'Por favor ingresa el campus de la universidad de maestría, si no tienes puedes colocar "None".'},
     )
 
-    Workplace = forms.CharField(
+    workplace = forms.CharField(
         label='Lugar de Trabajo', 
         max_length=30,
         required=False,
         widget=forms.TextInput(attrs={'class': "form-control", 'placeholder': 'Boston', 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
     )
 
-    Work_email = forms.CharField(
+    work_email = forms.CharField(
         label="Correo electrónico de trabajo",
         max_length=60, 
         required=False, 
         widget=forms.EmailInput(attrs={'class': "form-control", 'placeholder': 'info@example.com', 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
     )
 
-    Donor = forms.BooleanField(
+    donor = forms.BooleanField(
         label='Donante recurrente', 
         required=True,
         error_messages={'required': 'Por favor ingresa si eres o no donante recurrent en AlumnUSB.'},
     )
 
-    Social_networks = forms.CharField(
+    social_networks = forms.CharField(
         label='Redes sociales', 
         max_length=60,
         required=False,
         widget=forms.TextInput(attrs={'class': "form-control", 'placeholder': '@MiRedSocial', 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
     )
 
-    Twitter_account = forms.CharField(
+    twitter_account = forms.CharField(
         label='Twitter', 
         max_length=60,
         required=False,
         widget=forms.TextInput(attrs={'class': "form-control", 'placeholder': '@MiRedSocial', 'style': 'background-color: rgba(233, 229, 200, 0.5)'}),
     )
 
-    Instagram_account = forms.CharField(
+    instagram_account = forms.CharField(
         label='Instagram', 
         max_length=60,
         required=False,
@@ -233,30 +233,30 @@ class EditUserDataForm(forms.ModelForm):
     )
 
     class Meta:
-        model = User_information
+        model = UserInformation
         fields = (
-            'First_name',
-            'Middle_name',
-            'Last_name',
-            'Age',
-            'Mobile',
-            'Birthdate',
-            'Mailing_city',
-            'Mailing_state',
-            'Mailing_country',
-            'USB_alumn',
-            'Cohorte',
-            'Carnet',
-            'Undergrad_degree',
-            'USB_undergrad_campus',
-            'Graduate_degree',
-            'Graduate_campus',
-            'Workplace',
-            'Work_email',
-            'Donor',
-            'Social_networks',
-            'Twitter_account',
-            'Instagram_account'
+            'first_name',
+            'middle_name',
+            'last_name',
+            'age',
+            'mobile',
+            'birthdate',
+            'mailing_city',
+            'mailing_state',
+            'mailing_country',
+            'usb_alumn',
+            'cohorte',
+            'carnet',
+            'undergrad_degree',
+            'usb_undergrad_campus',
+            'graduate_degree',
+            'graduate_campus',
+            'workplace',
+            'work_email',
+            'donor',
+            'social_networks',
+            'twitter_account',
+            'instagram_account'
         )
 
 
@@ -265,32 +265,30 @@ class getUserDataForm(forms.ModelForm):#UserChangeForm):
     #message = forms.CharField(widget=forms.Textarea(), max_length=4000)
 
     class Meta:
-        model = User_information
+        model = UserInformation
         fields = (
-            'First_name',
-            'Middle_name',
-            'Last_name',
-            'Mailing_city',
-            'Mailing_state',
-            'USB_alumn',
-            #'Codigo_Alumn_USB',
-            'Mailing_country',
-            #'Email',
-            'Mobile',
-            'Cohorte',
-            'Birthdate',
-            'Age',
-            'Undergrad_degree',
-            'Graduate_degree',
-            'Carnet',
-            'USB_undergrad_campus',
-            'Graduate_campus',
-            'Work_email',
-            'Workplace',
-            'Donor',
-            'Social_networks',
-            'Twitter_account',
-            'Instagram_account'
+            'first_name',
+            'middle_name',
+            'last_name',
+            'mailing_city',
+            'mailing_state',
+            'usb_alumn',
+            'mailing_country',
+            'mobile',
+            'cohorte',
+            'birthdate',
+            'age',
+            'undergrad_degree',
+            'graduate_degree',
+            'carnet',
+            'usb_undergrad_campus',
+            'graduate_campus',
+            'work_email',
+            'workplace',
+            'donor',
+            'social_networks',
+            'twitter_account',
+            'instagram_account'
         )
 
 class pictureId(forms.Form):

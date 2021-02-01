@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from accounts.models import User_information, User_stats, Profile_Picture, Achievements, User_Achievements
+from accounts.models import UserInformation, UserStats, ProfilePicture, Achievements, UserAchievements
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.views import APIView
@@ -37,11 +37,11 @@ def register(request):
     user_serializer.save()
 
     # Create user default information
-    if not User_information.objects.filter(Email=email).exists():
+    if not UserInformation.objects.filter(email=email).exists():
         user_info = defaultUserInfo(email)
         user_info.save()
 
-    if not User_stats.objects.filter(Email=email).exists():
+    if not UserStats.objects.filter(email=email).exists():
         user_stat = defaultUserStats(email)
         user_stat.save()
 
@@ -73,7 +73,7 @@ def stats(request,user_id):
     except User.DoesNotExist:
         return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-    user_stats = User_stats.objects.get(Email=user.email)
+    user_stats = UserStats.objects.get(email=user.email)
 
     return JsonResponse(UserStatsSerializer(user_stats).data, status=status.HTTP_200_OK)
 
@@ -102,7 +102,7 @@ def achievements(request,user_id):
     except User.DoesNotExist:
         return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
     
-    user_stats = User_stats.objects.get(Email=user.email)
+    user_stats = UserStats.objects.get(email=user.email)
     achievs = Achievements.objects.all()
     user_achievs = []
     user_not_achievs = []
@@ -112,29 +112,26 @@ def achievements(request,user_id):
     # On the other hand user_not_achievs will have a list of achievements not reached
     # by the user
     for ach_model in achievs:
-        ach_name = ach_model.Name
+        ach_name = ach_model.name
         ach = AchievementsDic[ach_name]
-        n = None
-        ach_date = None
-
         # If the user has the achievement 
-        if User_Achievements.objects.filter(Owner=user_id,Achievement=ach_name).exists():
-            ach_date = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name).Date
+        if UserAchievements.objects.filter(owner=user_id,achievement=ach_name).exists():
+            ach_date = UserAchievements.objects.get(owner=user_id,achievement=ach_name).date
         # If the achievement checks total number of donations
         elif ach.type == AchievementsType.TOTAL_NUMBER_OF_DONATIONS:
-            n = user_stats.Total_number_of_gifts
+            n = user_stats.total_number_of_gifts
         # If the achievement checks total sum of donations 
         elif ach.type == AchievementsType.TOTAL_SUM_DONATIONS:
-            n = user_stats.Total_gifts
+            n = user_stats.total_gifts
         # If the achievement checks the biggest donation
         elif ach.type == AchievementsType.LARGEST_DONATION:
-            n = user_stats.Largest_gift
+            n = user_stats.largest_gift
         # For the moment this case is reserved for 'Donante recurrente' achievement
         else:
             f = True
-            n_gifts = user_stats.Total_number_of_gifts
+            n_gifts = user_stats.total_number_of_gifts
             f = f if n_gifts else False 
-            start = user_stats.Last_gift_date
+            start = user_stats.last_gift_date
             f = f if start else False
             last = date.today()
             
@@ -142,20 +139,20 @@ def achievements(request,user_id):
             f = False if months == 0 else f
  
             if(f and n_gifts/months >= 1):
-                User_Achievements(Owner=user,Achievement=ach_model).save()
-                new_ach = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name)
-                ach_date = new_ach.Date
+                UserAchievements(owner=user,achievement=ach_model).save()
+                new_ach = UserAchievements.objects.get(owner=user_id,achievement=ach_name)
+                ach_date = new_ach.date
         
         # If the achiev was based on total number or total sum or largest donation
         if n and n>=ach.goal:
-            User_Achievements(Owner=user,Achievement=ach_model).save()
-            new_ach = User_Achievements.objects.get(Owner=user_id,Achievement=ach_name)
-            ach_date = new_ach.Date
+            UserAchievements(owner=user,achievement=ach_model).save()
+            new_ach = UserAchievements.objects.get(owner=user_id,achievement=ach_name)
+            ach_date = new_ach.date
         
         if ach_date:
-            user_achievs.append({"Date": ach_date, "Achievement": ach_name, "Description": ach_model.Description})
+            user_achievs.append({"date": ach_date, "achievement": ach_name, "description": ach_model.description})
         else:
-            user_not_achievs.append({"Achievement": ach_name, "Description": ach_model.Description})
+            user_not_achievs.append({"achievement": ach_name, "description": ach_model.description})
             
     return JsonResponse({"achieved": user_achievs, "not_achieved" : user_not_achievs}, status=status.HTTP_200_OK)
         
@@ -188,7 +185,7 @@ class Profile(APIView):
         except User.DoesNotExist:
             return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-        user_info = User_information.objects.get(Email=user.email)
+        user_info = UserInformation.objects.get(email=user.email)
 
         return JsonResponse(UserInformationSerializer(user_info).data, status=status.HTTP_200_OK)
 
@@ -197,7 +194,7 @@ class Profile(APIView):
         Administrates account edition requests. 
         
         Parameters: 
-        request : PUT request with user User_information data except Picture, Email and Codigo_Alumn_USB
+        request : PUT request with user UserInformation data except Picture, Email and Codigo_Alumn_USB
         (int) user_id: requested user's id
 
         Returns: 
@@ -217,7 +214,7 @@ class Profile(APIView):
         except User.DoesNotExist:
             return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
 
-        user_info = User_information.objects.get(Email=user.email)
+        user_info = UserInformation.objects.get(email=user.email)
         user_info_serial = UserInformationSerializer(user_info, data = form_content, partial=True)
 
         # Check for errors in the form 

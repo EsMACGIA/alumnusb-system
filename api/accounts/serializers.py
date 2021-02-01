@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from accounts.models import User_information, User_stats, User_Achievements
+from accounts.models import UserInformation, UserStats, UserAchievements
  
 class UserSerializer(serializers.ModelSerializer):
 
@@ -26,19 +26,19 @@ class UserSerializer(serializers.ModelSerializer):
  
 class UserInformationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User_information
+        model = UserInformation
         exclude = ['id']
-        read_only_fields = ['Email']
+        read_only_fields = ['email']
 
 class UserStatsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User_stats
+        model = UserStats
         exclude = ['id']
-        read_only_fields = ['Email']
+        read_only_fields = ['email']
 
 class UserAchievementsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User_Achievements
+        model = UserAchievements
         exclude = ['id']
         depth = 1
 
