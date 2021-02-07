@@ -49,6 +49,25 @@ def register(request):
     form_content["id"] = user_serializer.data["id"]
     return JsonResponse(form_content, status=status.HTTP_201_CREATED) 
 
+def jwt_login_payload_handler(token, user=None, request=None):
+    """ 
+    Configures login endpoint to send aditional information aside a jwt token. 
+    
+    Parameters: 
+    request : POST request with user basic data (password, username)
+    (UserModel) user: User requested
+    token: JWT token to be sent
+
+    Returns: 
+    Json with jwt token and requested user's id
+  
+    """
+    payload = {
+        'token': token,
+        'user_id' : user.id,
+    }
+    return payload
+
 @api_view(['GET'])
 def stats(request,user_id):
     """ 
