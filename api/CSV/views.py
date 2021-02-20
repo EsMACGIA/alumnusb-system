@@ -21,7 +21,9 @@ def upload_csv_file(request):
   Returns:
   Json with the result of operation
   """
-
+  if 'file' not in request.FILES:
+    return JsonResponse({'status': 400, 'error': 'El campo file es requerido'}, status=status.HTTP_400_BAD_REQUEST)
+  
   csv_file = request.FILES['file']
 
   if not csv_file.name.endswith('.csv'):
