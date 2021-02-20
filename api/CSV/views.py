@@ -6,8 +6,6 @@ from rest_framework import status
 from accounts.models import UserInformation,UserStats
 import csv, io, datetime
 
-
-
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([])
@@ -81,25 +79,15 @@ def upload_csv_file(request):
 
   return JsonResponse({'status': 200, 'message': 'La carga fue exitosa'}, status=status.HTTP_200_OK)
 
-
 ## Functions to help the csv loader
 def is_int(x):
-	if (x==''):
-		return 0
-	return x
+	return 0 if x == '' else x
 
 def is_float(x):
-	if (x==''):
-		return 0.0
-	return x
+	return 0.0 if x == '' else x
 
 def transform_date(x):
-	if (x==''):
-		return '2020-01-01'
-	return datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d')
+  return '2020-01-01' if x == '' else datetime.datetime.strptime(x, '%m/%d/%Y').strftime('%Y-%m-%d')
 
 def is_bool(x):
-	if (x=='1'):
-		return True
-	else:
-		return False
+	return x == '1'
