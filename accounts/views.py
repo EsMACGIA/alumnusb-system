@@ -69,7 +69,7 @@ def user_data(request, username):
         ret_all_pics.append(( p , "/"+ p.picture.url ))
 
 
-    if ( user_info.picture != None ):
+    if not user_info.picture:
         pic = ProfilePicture.objects.get(id=user_info.picture.id)
         ret_pic = ( "/"+ pic.picture.url , True, pic.id )
     else:

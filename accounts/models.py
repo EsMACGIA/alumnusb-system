@@ -6,6 +6,9 @@ from accounts.utils import UndergraduateDegreeChoice
 from django.utils import timezone
 from datetime import date
 
+# Modify django users to admit only unique emails
+User._meta.get_field('email')._unique = True
+
 class ProfilePicture(models.Model):
 	picture = models.ImageField(upload_to='static/prof_img/')
 
