@@ -37,7 +37,7 @@ class UserInformation(models.Model):
 	picture = models.ForeignKey(ProfilePicture, on_delete=models.SET_NULL, null=True)
 
 	def __str__(self):
-		return self.Email
+		return self.email
 
 class UserStats(models.Model):
 	email = models.EmailField(max_length=60, unique=True)
@@ -52,7 +52,7 @@ class UserStats(models.Model):
 	total_number_of_gifts = models.IntegerField()
 
 	def __str__(self):
-		return self.Email
+		return self.email
 
 class Achievements(models.Model):
 	name = models.CharField(primary_key=True, max_length=50)
