@@ -83,8 +83,6 @@ def upload_csv_file(request):
   except: 
     return JsonResponse({'status': 400, 'message': 'El formato del archivo no es correcto'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-
 ## Functions to help the csv loader
 def is_int(x):
 	return 0 if x == '' else x
