@@ -66,6 +66,8 @@ def jwt_login_payload_handler(token, user=None, request=None):
         'token': token,
         'user_id' : user.id,
         'is_admin' : user.is_superuser,
+        'email' : user.email,
+        'username' : user.username,
     }
     return payload
 
