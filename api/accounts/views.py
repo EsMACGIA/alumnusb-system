@@ -135,6 +135,8 @@ def achievements(request,user_id):
     # by the user
     for ach_model in achievs:
         ach_name = ach_model.name
+        ach_date = None
+        n = None
         ach = AchievementsDic[ach_name]
         # If the user has the achievement 
         if UserAchievements.objects.filter(owner=user_id,achievement=ach_name).exists():
