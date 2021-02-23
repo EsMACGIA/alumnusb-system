@@ -4,11 +4,11 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework import status
 from accounts.models import UserInformation,UserStats
-from rest_framework.permissions import IsAuthenticated,IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 import csv, io, datetime
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated,IsAdminUser])
+@permission_classes([IsAuthenticated])
 def upload_csv_file(request):
   """
   Upload CSV file for load donations information
