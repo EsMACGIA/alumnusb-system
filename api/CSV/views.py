@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated,IsAdminUser
 import csv, io, datetime
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdminUser])
 def upload_csv_file(request):
   """
   Upload CSV file for load donations information
