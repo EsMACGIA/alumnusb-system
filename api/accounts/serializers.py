@@ -42,7 +42,3 @@ class UserAchievementsSerializer(serializers.ModelSerializer):
         exclude = ['id']
         depth = 1
 
-
-
-    
-      
