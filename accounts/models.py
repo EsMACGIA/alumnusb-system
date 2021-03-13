@@ -75,3 +75,7 @@ class Message(models.Model):
 	page = models.CharField(max_length=30, primary_key=True)
 	title = models.CharField(max_length=50,default=' ')
 	txt = models.CharField(max_length=2000,default=' ')
+
+class Contact(models.Model):
+	id = models.CharField(max_length=50, primary_key=True)
+	email = models.EmailField(max_length=60, unique=True)
