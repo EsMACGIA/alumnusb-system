@@ -75,4 +75,4 @@ def defaultUserStats(email):
     """
     return UserStats(email=email,average_gift=0,
                     largest_gift=0,smallest_gift=0,total_gifts=0,
-                    best_gift_year_total=0,best_gift_year=0, first_gift_date='2020-1-1', last_gift_date='2020-1-1', total_number_of_gifts=0)
+                    best_gift_year_total=0,best_gift_year=0, first_gift_date=None, last_gift_date=None, total_number_of_gifts=0)

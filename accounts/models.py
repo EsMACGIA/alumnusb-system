@@ -79,3 +79,9 @@ class Message(models.Model):
 class Contact(models.Model):
 	id = models.CharField(max_length=50, primary_key=True)
 	email = models.EmailField(max_length=60, unique=True)
+
+class Donation(models.Model):
+	id = models.CharField(max_length=50, primary_key=True)
+	contact = models.ForeignKey(Contact,on_delete=models.CASCADE,default=None)
+	amount = models.FloatField()
+	date = models.DateField()
