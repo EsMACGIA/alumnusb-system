@@ -94,7 +94,7 @@ ach16 = Achievements(name='Donante',
 ach16.picture.save('donante.png', File(open('static/img/medals/t5.png', 'rb')))
 
 ach17 = Achievements(name='Donante recurrente',
-					description='Realiza una donacion de al menos 1000 dolares',
+					description='Realiza una donacion al mes desde tu primera donacion',
 					level=5)
 ach17.picture.save('recurrente.png', File(open('static/img/medals/t4.png', 'rb')))
 

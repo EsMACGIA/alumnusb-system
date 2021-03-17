@@ -136,13 +136,10 @@ def achievements(request,user_id):
     for ach_model in achievs:
         ach_name = ach_model.name
         ach_date = None
-        n = None
         ach = AchievementsDic[ach_name]
-        # If the user has the achievement 
-        if UserAchievements.objects.filter(owner=user_id,achievement=ach_name).exists():
-            ach_date = UserAchievements.objects.get(owner=user_id,achievement=ach_name).date
+        
         # If the achievement checks total number of donations
-        elif ach.type == AchievementsType.TOTAL_NUMBER_OF_DONATIONS:
+        if ach.type == AchievementsType.TOTAL_NUMBER_OF_DONATIONS:
             n = user_stats.total_number_of_gifts
         # If the achievement checks total sum of donations 
         elif ach.type == AchievementsType.TOTAL_SUM_DONATIONS:
@@ -159,16 +156,35 @@ def achievements(request,user_id):
             f = f if start else False
             last = date.today()
             
-            months = ((last - start).days)//30
-            f = False if months == 0 else f
- 
+            if start:
+                months = ((last - start).days)//30
+                f = False if months == 0 else f
+
+            # In this case 0 is enough to achieve the goal because there is not a  
+            # defined goal
             if(f and n_gifts/months >= 1):
-                UserAchievements(owner=user,achievement=ach_model).save()
-                new_ach = UserAchievements.objects.get(owner=user_id,achievement=ach_name)
-                ach_date = new_ach.date
+                n = 0
         
-        # If the achiev was based on total number or total sum or largest donation
-        if n and n>=ach.goal:
+        # Check if the achievement was already achieved
+        try:
+            old_ach = UserAchievements.objects.get(owner=user_id, achievement=ach_name)
+        except:
+            old_ach = None
+
+        achieved = n>=ach.goal
+
+        # If the user has the achievement and it is correct 
+        if old_ach and achieved:
+            ach_date = old_ach.date
+        # If the user has the achievement and it is not correct 
+        elif old_ach and not achieved:
+            # Delete it
+            old_ach.delete()
+
+        
+        # If chieved and did not exist before
+        if achieved and not old_ach:
+            # Create new achiev
             UserAchievements(owner=user,achievement=ach_model).save()
             new_ach = UserAchievements.objects.get(owner=user_id,achievement=ach_name)
             ach_date = new_ach.date
