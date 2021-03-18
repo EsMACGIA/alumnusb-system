@@ -59,7 +59,7 @@ def defaultUserInfo(email):
                     age=1,undergrad_degree='',graduate_degree='',carnet=0,
                     usb_undergrad_campus='',graduate_campus='',work_email='',
                     workplace='',donor=1,social_networks='',twitter_account='',
-                    instagram_account='')
+                    instagram_account='', picture_id=1)
 
 
 def defaultUserStats(email):
