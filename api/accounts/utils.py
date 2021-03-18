@@ -3,8 +3,8 @@ from enum import Enum
 
 # THIS SECTION IS USEFUL TO SAVE ERROR MSGS 
 class ErrorMessages:
-    UserNotFound = {"error" : "User does not exist"}
-    UnauthAccesAccount = {"error" : "Unauthorized access to another user's account"}
+    UserNotFound = {"error" : ["User does not exist"], "status_code": 404}
+    UnauthAccesAccount = {"error" : ["Unauthorized access to another user's account"], "status_code": 401}
 
 # THIS SECTION IS USEFUL TO ADMINISTRATE TYPES OF ACHIEVEMENTS
 class AchievementsData:

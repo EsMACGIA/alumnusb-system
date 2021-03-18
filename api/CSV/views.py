@@ -20,12 +20,12 @@ def upload_csv_file(request):
   Json with the result of operation
   """
   if 'file' not in request.FILES:
-    return JsonResponse({'status': 400, 'error': 'El campo file es requerido'}, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse({'status_code': 400, 'error': 'El campo file es requerido'}, status=status.HTTP_400_BAD_REQUEST)
   
   csv_file = request.FILES['file']
 
   if not csv_file.name.endswith('.csv'):
-    return JsonResponse({'status': 400, 'error': 'El formato del archivo no es .csv'}, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse({'status_code': 400, 'error': 'El formato del archivo no es .csv'}, status=status.HTTP_400_BAD_REQUEST)
 
   try:
     data_set = csv_file.read().decode('UTF-8')
@@ -36,7 +36,7 @@ def upload_csv_file(request):
 
       if (len(column) != 34):
         error = 'Formato incorrecto de CSV'
-        return JsonResponse({'status': 400, 'error': error}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({'status_code': 400, 'error': error}, status=status.HTTP_400_BAD_REQUEST)
 
       UserInformation.objects.filter(email=column[9]).delete()
       UserStats.objects.filter(email=column[9]).delete()
@@ -81,7 +81,7 @@ def upload_csv_file(request):
     return JsonResponse({'status': 200, 'message': 'La carga fue exitosa'}, status=status.HTTP_200_OK)
 
   except: 
-    return JsonResponse({'status': 400, 'message': 'El formato del archivo no es correcto'}, status=status.HTTP_400_BAD_REQUEST)
+    return JsonResponse({'status_code': 400, 'message': 'El formato del archivo no es correcto'}, status=status.HTTP_400_BAD_REQUEST)
 
 ## Functions to help the csv loader
 def is_int(x):

@@ -9,6 +9,7 @@ from rest_framework import status
 from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer, UserAchievementsSerializer
 from .utils import ErrorMessages, defaultUserStats, defaultUserInfo, AchievementsDic, AchievementsType
 from datetime import date
+from rest_framework.exceptions import ValidationError
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -31,7 +32,7 @@ def register(request):
 
     # Check if the body of the request was correct
     if not user_serializer.is_valid():
-        return JsonResponse(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+        raise ValidationError(user_serializer.errors)
 
     email = form_content['email']
     user_serializer.save()
@@ -259,7 +260,7 @@ class Profile(APIView):
 
         # Check for errors in the form 
         if not user_info_serial.is_valid():
-            return JsonResponse(user_info_serial.errors, status=status.HTTP_400_BAD_REQUEST)
+           raise ValidationError(user_info_serial.errors)
         
         user_info_serial.save()
 
