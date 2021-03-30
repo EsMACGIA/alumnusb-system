@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from accounts.models import UserInformation, UserStats, ProfilePicture, Achievements, UserAchievements
+from accounts.models import UserInformation, UserStats, ProfilePicture, Achievements, UserAchievements, Friends
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.views import APIView
@@ -10,6 +10,7 @@ from .serializers import UserSerializer, UserInformationSerializer, UserStatsSer
 from .utils import ErrorMessages, defaultUserStats, defaultUserInfo, AchievementsDic, AchievementsType
 from datetime import date
 from rest_framework.exceptions import ValidationError
+from itertools import chain
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -266,3 +267,42 @@ class Profile(APIView):
 
         return JsonResponse(user_info_serial.data, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def friends_ranking(request,user_id):
+    """ 
+    Returns a list of friends andd total achievements of each of them of the requested user. 
+    
+    Parameters: 
+    request : GET request 
+    (int) user_id: requested user's id
+    
+    Returns: 
+    Json with requested user's list of friends data
+  
+    """
+    
+    # User requested and requesting user must match
+    if user_id != request.user.id:
+        return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
+
+    # User must exist
+    try:
+        user =  User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
+
+    friends_a = Friends.objects.filter(friend_b_id=user_id).values()
+    friends_b = Friends.objects.filter(friend_a_id=user_id).values()
+
+    # List of friends id including the given user
+    friends = list(chain(map(lambda x: x['friend_a_id'], friends_a), map(lambda x: x['friend_b_id'], friends_b), [user.id]))
+
+    # Retrieve the needed data for each friend
+    friends_rank = []
+    for f in friends:
+        f = User.objects.get(pk=f)
+        total_achievements = UserAchievements.objects.filter(owner=f).count()
+        total_donations = UserStats.objects.get(email=f.email).total_gifts
+        friends_rank.append({'username': f.username,'total_achievements': total_achievements, 'total_donations': total_donations})
+        
+    return JsonResponse({'friends_ranking': friends_rank}, status=status.HTTP_200_OK)

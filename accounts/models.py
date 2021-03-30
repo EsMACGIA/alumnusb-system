@@ -5,6 +5,7 @@ from accounts.utils import CampusChoice
 from accounts.utils import UndergraduateDegreeChoice
 from django.utils import timezone
 from datetime import date
+from django.core.exceptions import ValidationError
 
 # Modify django users to admit only unique emails
 User._meta.get_field('email')._unique = True
@@ -85,3 +86,26 @@ class Donation(models.Model):
 	contact = models.ForeignKey(Contact,on_delete=models.CASCADE,default=None)
 	amount = models.FloatField()
 	date = models.DateField()
+
+class Friends(models.Model):
+	friend_a = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_b_friends')
+	friend_b = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_a_friends')
+
+	class Meta:
+		unique_together = ('friend_a', 'friend_b')
+
+	# Define extra constraints
+	def clean(self):
+
+		# Throw a validation error if someone tries to switch friends order and add them again
+		try:
+			Friends.objects.get(friend_a_id=self.friend_b_id, friend_b_id=self.friend_a_id)
+			raise ValidationError('These two users are friends already.')
+		except Friends.DoesNotExist:
+			pass
+
+		# You cannot be your own friend
+		if self.friend_a_id == self.friend_b_id:
+			raise ValidationError('Yuo cannot be your own friend.')
+		
+
