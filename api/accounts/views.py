@@ -91,11 +91,7 @@ def stats(request,user_id):
     if user_id != request.user.id:
         return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
 
-    # User must exist
-    try:
-        user =  User.objects.get(pk=user_id)
-    except User.DoesNotExist:
-        return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
+    user =  User.objects.get(pk=user_id)
 
     user_stats = UserStats.objects.get(email=user.email)
 
@@ -120,11 +116,7 @@ def achievements(request,user_id):
     if user_id != request.user.id:
         return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
 
-    # User must exist
-    try:
-        user =  User.objects.get(pk=user_id)
-    except User.DoesNotExist:
-        return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
+    user =  User.objects.get(pk=user_id)
     
     user_stats = UserStats.objects.get(email=user.email)
     achievs = Achievements.objects.all()
@@ -221,11 +213,7 @@ class Profile(APIView):
         if user_id != request.user.id:
             return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED) 
 
-        # User must exist
-        try:
-            user =  User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
+        user =  User.objects.get(pk=user_id)
 
         user_info = UserInformation.objects.get(email=user.email)
 
@@ -251,10 +239,7 @@ class Profile(APIView):
         if user_id != request.user.id:
             return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED) 
 
-        try:
-            user =  User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
+        user =  User.objects.get(pk=user_id)
 
         user_info = UserInformation.objects.get(email=user.email)
         user_info_serial = UserInformationSerializer(user_info, data = form_content, partial=True)
@@ -285,11 +270,7 @@ def friends_ranking(request,user_id):
     if user_id != request.user.id:
         return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
 
-    # User must exist
-    try:
-        user =  User.objects.get(pk=user_id)
-    except User.DoesNotExist:
-        return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
+    user =  User.objects.get(pk=user_id)
 
     friends_a = Friends.objects.filter(friend_b_id=user_id).values()
     friends_b = Friends.objects.filter(friend_a_id=user_id).values()
