@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
-from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer, UserAchievementsSerializer
+from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer, UserAchievementsSerializer, FriendRequestSerializer
 from .utils import ErrorMessages, defaultUserStats, defaultUserInfo, AchievementsDic, AchievementsType
 from datetime import date
 from rest_framework.exceptions import ValidationError
@@ -322,4 +322,56 @@ class FriendRequests(APIView):
             requested_users.append(user)
 
         return JsonResponse({'requested_users': requested_users}, status=status.HTTP_200_OK)
+
+    def post(self, request, username):
+        """ 
+        Administrates request creation requests. 
+        
+        Parameters: 
+        request : POST request 
+        (int) user_id: username of the user we want to request
+
+        Returns: 
+        Json with created request data
+    
+        """
+
+        user_id = request.user.id
+        user =  User.objects.get(pk=user_id)
+        
+        try:
+            requested = User.objects.get(username=username)
+            requested_id = requested.id
+        except Exception as e:
+            return JsonResponse("Nombre de usuario solicitado es incorrecto.", status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the given data is valid 
+        error = {"error" : [], "status_code": 400}
+
+        # Cannot add the same person twice
+        if FriendRequest.objects.filter(requesting_id=user_id,requested_id=requested_id).exists():
+            error["error"].append("El usuario solicitado ya fue solicitado previamente.")
+
+        # Cannot add a friend
+        if Friends.objects.filter(friend_a_id=user_id, friend_b_id=requested_id).exists() \
+            or Friends.objects.filter(friend_a_id=requested_id, friend_b_id=user_id).exists():
+            error["error"].append("El usuario solicitado ya es tu amigo.")
+
+        # Cannot invite yourself
+        if user_id == requested_id:
+            error["error"].append("No puedes ser tu propio amigo.")
+
+        if len(error["error"]) > 0:
+            return JsonResponse(error, status=status.HTTP_400_BAD_REQUEST)
+
+        serial = FriendRequestSerializer(data={'requesting': user_id, 'requested': requested.id})
+
+        # Check for errors in the serializer
+        if not serial.is_valid():
+            return JsonResponse(serial.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serial.save()
+
+        return JsonResponse(serial.data, status=status.HTTP_200_OK)
+
 

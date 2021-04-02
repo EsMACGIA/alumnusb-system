@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from accounts.models import UserInformation, UserStats, UserAchievements
+from accounts.models import UserInformation, UserStats, UserAchievements, FriendRequest
  
 class UserSerializer(serializers.ModelSerializer):
 
@@ -42,4 +42,9 @@ class UserAchievementsSerializer(serializers.ModelSerializer):
         model = UserAchievements
         exclude = ['id']
         depth = 1
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        exclude = ['id']
 
