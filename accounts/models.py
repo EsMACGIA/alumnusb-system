@@ -6,6 +6,7 @@ from accounts.utils import UndergraduateDegreeChoice
 from django.utils import timezone
 from datetime import date
 from django.core.exceptions import ValidationError
+import datetime
 
 # Modify django users to admit only unique emails
 User._meta.get_field('email')._unique = True
@@ -111,29 +112,10 @@ class Friends(models.Model):
 class FriendRequest(models.Model):
 	requesting = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_requests')
 	requested = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_requested')
-	date = models.DateField(default=timezone.now)
+	date = models.DateField(default=datetime.date.today)
 
 	class Meta:
 		unique_together = ('requesting', 'requested')
 
-	# Define extra constraints
-	def clean(self):
-
-		# Throw a validation error if someone tries to request friendship from a friend
-		try:
-			Friends.objects.get(friend_a_id=self.requesting_id, friend_b_id=self.requested_id)
-			raise ValidationError('These two users are friends already.')
-		except Friends.DoesNotExist:
-			pass
-
-		try:
-			Friends.objects.get(friend_a_id=self.requested_id, friend_b_id=self.requesting_id)
-			raise ValidationError('These two users are friends already.')
-		except Friends.DoesNotExist:
-			pass
-
-		# You cannot be your own friend
-		if self.requesting_id == self.requested_id:
-			raise ValidationError('You cannot be your own friend.')
 		
 

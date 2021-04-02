@@ -13,6 +13,7 @@ urlpatterns = [
     path('achievements/<int:user_id>', achievements, name="user_achievements"),
     path('friends_ranking/<int:user_id>', friends_ranking, name="friends_ranking"),
     path('friend_requests/<int:user_id>', FriendRequests.as_view(), name="friend_requests_detail"),
+    path('friend_requests/<username>', FriendRequests.as_view(), name="friend_requests_creation"),
 ]
 
 # This step is needed if using APIview classes
