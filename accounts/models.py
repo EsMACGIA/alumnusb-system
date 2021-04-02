@@ -106,6 +106,34 @@ class Friends(models.Model):
 
 		# You cannot be your own friend
 		if self.friend_a_id == self.friend_b_id:
-			raise ValidationError('Yuo cannot be your own friend.')
+			raise ValidationError('You cannot be your own friend.')
+
+class FriendRequest(models.Model):
+	requesting = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_requests')
+	requested = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_requested')
+	date = models.DateField(default=timezone.now)
+
+	class Meta:
+		unique_together = ('requesting', 'requested')
+
+	# Define extra constraints
+	def clean(self):
+
+		# Throw a validation error if someone tries to request friendship from a friend
+		try:
+			Friends.objects.get(friend_a_id=self.requesting_id, friend_b_id=self.requested_id)
+			raise ValidationError('These two users are friends already.')
+		except Friends.DoesNotExist:
+			pass
+
+		try:
+			Friends.objects.get(friend_a_id=self.requested_id, friend_b_id=self.requesting_id)
+			raise ValidationError('These two users are friends already.')
+		except Friends.DoesNotExist:
+			pass
+
+		# You cannot be your own friend
+		if self.requesting_id == self.requested_id:
+			raise ValidationError('You cannot be your own friend.')
 		
 

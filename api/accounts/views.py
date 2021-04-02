@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from accounts.models import UserInformation, UserStats, ProfilePicture, Achievements, UserAchievements, Friends
+from accounts.models import UserInformation, UserStats, ProfilePicture, Achievements, UserAchievements, Friends, FriendRequest
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.views import APIView
@@ -287,3 +287,39 @@ def friends_ranking(request,user_id):
         friends_rank.append({'username': f.username,'total_achievements': total_achievements, 'total_donations': total_donations})
         
     return JsonResponse({'friends_ranking': friends_rank}, status=status.HTTP_200_OK)
+
+class FriendRequests(APIView):
+
+    """
+    Retrieve friend requests, Delete friend requests.
+    """
+
+    def get(self, request, user_id):
+        """ 
+        Retrieves account's friend requests. 
+        
+        Parameters: 
+        request : GET request 
+        (int) user_id: requesting user's id
+
+        Returns: 
+        Json with user's friend requests
+    
+        """
+
+        # User requested and requesting user must match
+        if user_id != request.user.id:
+            return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Get the requests and send only useful data
+        requests = FriendRequest.objects.filter(requesting_id=user_id)
+        requested_users = []
+        for request in requests:
+            user = {}
+            user['request_date'] = request.date
+            user['username'] = request.requested.username
+            user['user_id'] = request.requested.id
+            requested_users.append(user)
+
+        return JsonResponse({'requested_users': requested_users}, status=status.HTTP_200_OK)
+
