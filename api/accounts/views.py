@@ -288,19 +288,50 @@ def friends_ranking(request,user_id):
         
     return JsonResponse({'friends_ranking': friends_rank}, status=status.HTTP_200_OK)
 
+
+@api_view(['GET'])
+def requesting_me(request,username):
+    """ 
+    Returns a Json with a list of users that are requesting the given user_id. 
+    
+    Parameters: 
+    request : GET request 
+    username: username if the requested user
+    
+    Returns: 
+    Json with list of users requesting the given user
+  
+    """
+    
+    # User requested and requesting user must match
+    if username!= request.user.username:
+        return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
+
+    # Get the requests and send only useful data
+    requests = FriendRequest.objects.filter(requested_id=request.user.id)
+    requesting_users = []
+    for request in requests:
+        user = {}
+        user['request_date'] = request.date
+        user['username'] = request.requesting.username
+        user['user_id'] = request.requesting.id
+        requesting_users.append(user)
+
+    return JsonResponse({'requesting_users': requesting_users}, status=status.HTTP_200_OK)
+
 class FriendRequests(APIView):
 
     """
-    Retrieve friend requests, Delete friend requests.
+    Retrieve, Reject, Accept, Create friend requests.
     """
 
-    def get(self, request, user_id):
+    def get(self, request, username):
         """ 
         Retrieves account's friend requests. 
         
         Parameters: 
         request : GET request 
-        (int) user_id: requesting user's id
+        username: requesting user's username
 
         Returns: 
         Json with user's friend requests
@@ -308,11 +339,11 @@ class FriendRequests(APIView):
         """
 
         # User requested and requesting user must match
-        if user_id != request.user.id:
+        if username != request.user.username:
             return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
 
         # Get the requests and send only useful data
-        requests = FriendRequest.objects.filter(requesting_id=user_id)
+        requests = FriendRequest.objects.filter(requesting_id=request.user.id)
         requested_users = []
         for request in requests:
             user = {}
@@ -329,7 +360,7 @@ class FriendRequests(APIView):
         
         Parameters: 
         request : POST request 
-        (int) user_id: username of the user we want to request
+        username: username of the user we want to request
 
         Returns: 
         Json with created request data
@@ -373,5 +404,36 @@ class FriendRequests(APIView):
         serial.save()
 
         return JsonResponse(serial.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, username):
+        """ 
+        Reject account's friend request. 
+        
+        Parameters: 
+        request : DELETE request 
+        username: username we want to reject
+
+        Returns: 
+        Json with username of the deleted friend request
+
+        """
+
+        answer_json = {'user_rejected': username}
+
+        # The rejected user must exist, if not then the request does not exist
+        try:
+            requesting_user = User.objects.get(username = username)
+        except:
+            return JsonResponse(answer_json, status=status.HTTP_200_OK)
+
+        # If the friend request does not exist then it was deleted
+        try:
+            fr = FriendRequest.objects.get(requesting_id=requesting_user.id, requested_id=request.user.id)
+        except:
+            return JsonResponse(answer_json, status=status.HTTP_200_OK)
+
+        fr.delete()
+        return JsonResponse(answer_json, status=status.HTTP_200_OK)
+
 
 
