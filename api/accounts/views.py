@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser 
 from rest_framework import status
-from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer, UserAchievementsSerializer, FriendRequestSerializer
+from .serializers import UserSerializer, UserInformationSerializer, UserStatsSerializer, UserAchievementsSerializer, FriendRequestSerializer, FriendsSerializer
 from .utils import ErrorMessages, defaultUserStats, defaultUserInfo, AchievementsDic, AchievementsType
 from datetime import date
 from rest_framework.exceptions import ValidationError
@@ -288,6 +288,79 @@ def friends_ranking(request,user_id):
         
     return JsonResponse({'friends_ranking': friends_rank}, status=status.HTTP_200_OK)
 
+@api_view(['POST'])
+def accept_friend(request,username):
+    """ 
+    Returns a JSON with the data of the friends relation if created properly. 
+    
+    Parameters: 
+    request : POST request with the usernames of both future friends
+    username: username of the user that wants to accept the request
+    
+    Returns: 
+    Json with information data of the friends relationship
+  
+    """
+
+    user_a = request.user
+    user_a_id = user_a.id
+    
+    # User requested and requesting user must match
+    if username != user_a.username:
+        return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
+
+    # Turn JSON into python dic
+    form_content = JSONParser().parse(request)
+
+    username_a = form_content["username_a"]
+    username_b = form_content["username_b"]
+
+    # At least one of the involved friends must be the user using the endpoint
+    if username_a != username and username_b != username:
+        return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
+
+
+    # User_a will be the user using the endpoint
+    if username_a != username:
+        username_b, username_a = username_a, username_b
+
+    # User b must exist
+    try:
+        user_b = User.objects.get(username=username_b)
+        user_b_id = user_b.id
+    except User.DoesNotExist:
+        return JsonResponse(ErrorMessages.UserNotFound, status=status.HTTP_404_NOT_FOUND)
+
+    # The friend request from user_b must exist else it would be an illegal 
+    # operation 
+    if not FriendRequest.objects.filter(requesting_id=user_b_id,requested_id=user_a_id).exists():
+        return JsonResponse(ErrorMessages.UnauthAccesAccount, status=status.HTTP_401_UNAUTHORIZED)
+
+    # Check if the given data is valid 
+    error = {"error" : [], "status_code": 400}
+
+    # Cannot add the same person twice
+    if Friends.objects.filter(friend_a_id=user_a_id,friend_b_id=user_b_id).exists() or \
+        Friends.objects.filter(friend_a_id=user_b_id,friend_b_id=user_a_id).exists():
+        error["error"].append("The user to accept is already your friend.")
+
+    # Cannot accept yourself
+    if user_a_id == user_b_id:
+        error["error"].append("Cannot be your own friend.")
+
+    if len(error["error"]) > 0:
+        return JsonResponse(error, status=status.HTTP_400_BAD_REQUEST)
+
+    # Create the friends relationship 
+    friends = Friends(friend_a=user_a, friend_b=user_b)
+    friends.save()
+
+    # Delete all the friend requests from both sides 
+    FriendRequest.objects.filter(requesting_id=user_b_id,requested_id=user_a_id).delete()
+    FriendRequest.objects.filter(requesting_id=user_a_id,requested_id=user_b_id).delete()
+
+    return JsonResponse(FriendsSerializer(friends).data, status=status.HTTP_200_OK)
+
 
 @api_view(['GET'])
 def requesting_me(request,username):
@@ -296,7 +369,7 @@ def requesting_me(request,username):
     
     Parameters: 
     request : GET request 
-    username: username if the requested user
+    username: username of the requested user
     
     Returns: 
     Json with list of users requesting the given user
@@ -373,8 +446,8 @@ class FriendRequests(APIView):
         try:
             requested = User.objects.get(username=username)
             requested_id = requested.id
-        except Exception as e:
-            return JsonResponse("Nombre de usuario solicitado es incorrecto.", status=status.HTTP_404_NOT_FOUND)
+        except User.DoesNotExist:
+            return JsonResponse({"error" : ["El usuario a agregar no se puede encontrar."], "status_code": 404}, status=status.HTTP_404_NOT_FOUND)
 
         # Check if the given data is valid 
         error = {"error" : [], "status_code": 400}

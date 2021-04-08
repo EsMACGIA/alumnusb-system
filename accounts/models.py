@@ -95,20 +95,6 @@ class Friends(models.Model):
 	class Meta:
 		unique_together = ('friend_a', 'friend_b')
 
-	# Define extra constraints
-	def clean(self):
-
-		# Throw a validation error if someone tries to switch friends order and add them again
-		try:
-			Friends.objects.get(friend_a_id=self.friend_b_id, friend_b_id=self.friend_a_id)
-			raise ValidationError('These two users are friends already.')
-		except Friends.DoesNotExist:
-			pass
-
-		# You cannot be your own friend
-		if self.friend_a_id == self.friend_b_id:
-			raise ValidationError('You cannot be your own friend.')
-
 class FriendRequest(models.Model):
 	requesting = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_requests')
 	requested = models.ForeignKey(User, on_delete=models.CASCADE, related_name='my_requested')
