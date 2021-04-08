@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 from rest_framework.urlpatterns import format_suffix_patterns
-from .views import register, achievements, stats, Profile, friends_ranking, FriendRequests
+from .views import register, achievements, stats, Profile, friends_ranking, FriendRequests, requesting_me
 
 urlpatterns = [
     path('login/', obtain_jwt_token),
@@ -12,8 +12,8 @@ urlpatterns = [
     path('stats/<int:user_id>', stats, name="stats"),
     path('achievements/<int:user_id>', achievements, name="user_achievements"),
     path('friends_ranking/<int:user_id>', friends_ranking, name="friends_ranking"),
-    path('friend_requests/<int:user_id>', FriendRequests.as_view(), name="friend_requests_detail"),
-    path('friend_requests/<username>', FriendRequests.as_view(), name="friend_requests_creation"),
+    path('friend_requests/<username>', FriendRequests.as_view(), name="friend_requests"),
+    path('friend_requests/requesting_me/<username>', requesting_me, name="friend_requests_requesting_me")
 ]
 
 # This step is needed if using APIview classes
