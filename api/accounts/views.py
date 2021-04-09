@@ -312,8 +312,11 @@ def accept_friend(request,username):
     # Turn JSON into python dic
     form_content = JSONParser().parse(request)
 
-    username_a = form_content["username_a"]
-    username_b = form_content["username_b"]
+    try:
+        username_a = form_content["username_a"]
+        username_b = form_content["username_b"]
+    except:
+        return JsonResponse({"error" : ["Wrong body."], "status_code": 400}, status=status.HTTP_400_BAD_REQUEST)
 
     # At least one of the involved friends must be the user using the endpoint
     if username_a != username and username_b != username:
