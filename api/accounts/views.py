@@ -131,7 +131,7 @@ def achievements(request,user_id):
         ach_name = ach_model.name
         ach_date = None
         ach = AchievementsDic[ach_name]
-        n = -5
+        n = -1
         
         # If the achievement checks total number of donations
         if ach.type == AchievementsType.TOTAL_NUMBER_OF_DONATIONS:
