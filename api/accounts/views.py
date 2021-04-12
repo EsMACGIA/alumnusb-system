@@ -131,6 +131,7 @@ def achievements(request,user_id):
         ach_name = ach_model.name
         ach_date = None
         ach = AchievementsDic[ach_name]
+        n = -1
         
         # If the achievement checks total number of donations
         if ach.type == AchievementsType.TOTAL_NUMBER_OF_DONATIONS:
@@ -152,7 +153,12 @@ def achievements(request,user_id):
             
             if start:
                 months = ((last - start).days)//30
-                f = False if months == 0 else f
+                # Edge case a month has not happened but there are gifts
+                if months == 0:
+                    n = 0
+                    f = False
+            else:
+                f = False
 
             # In this case 0 is enough to achieve the goal because there is not a  
             # defined goal

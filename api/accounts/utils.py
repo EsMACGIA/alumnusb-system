@@ -36,7 +36,7 @@ AchievementsDic = {
     "Donacion estrella oro" : AchievementsData(AchievementsType.LARGEST_DONATION, 50),
     "Donacion estrella platino" : AchievementsData(AchievementsType.LARGEST_DONATION, 100),
     "Donacion estrella diamante" : AchievementsData(AchievementsType.LARGEST_DONATION, 500),
-    "Donante recurrente": AchievementsData(AchievementsType.UNKNOWN, -1)
+    "Donante recurrente": AchievementsData(AchievementsType.UNKNOWN, 0)
 }
 
 # THIS SECTION IS USEFUL TO CREATE DEFAULT INFORMATION
